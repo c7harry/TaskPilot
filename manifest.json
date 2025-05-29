@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "My Extension",
+  "version": "1.0",
+  "description": "A Chrome Extension!",
+  "action": {
+    "default_popup": "HTML/popup.html",
+    "default_icon": "Images/logo.png"
+  },
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["<all_urls>"]
+}
