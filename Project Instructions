@@ -1,0 +1,50 @@
+This is a JavaScript Project, the focus should be on JavaScript but you may have HTML and CSS in your project if you would like
+
+Your project NEEDs to have interactivity built into it
+It should provide some USEFUL and INTERESTING functionality
+
+Your project functions should NOT just be “hard-coded”, they should be programmatic and actually reusable or dynamic (if you don’t know how to do this I can work with you on this in class code reviews)
+
+Various Project ideas:
+    Simulations
+    Animations (preferably with some amount of user interaction)
+    The essence of calculus
+    Small Games
+    Text based adventure games
+
+Other easily scalable simple games like 
+    pong
+    invaders
+    asteroids
+    Space invaders
+    Shooters
+
+Other various simple games
+
+Small Apps or widgets or Components
+Some kind of Chrome Extension or addon
+
+Something that integrates with Google Sheets or some other APIs (if you want a bit of a challenge since we didn’t really cover fetch syntax yet)
+
+Automations (building interesting automations and scripts with airtable.com)
+
+Send out emails
+
+Create forms or PDFs from a database
+
+
+Pick something that YOU are topically interested in
+Math/ Science/ Nature/Music / Games / hobbies/ lifegoals etc
+
+
+Your project does not need to be a large application (this is hard to build without a JavaScript Framework, and impossible to build in a short time frame with only 1 or 2 beginners)
+
+You may use any JavaScript Libraries you would like, including Frameworks if you so choose
+
+I HIGHLY recommend using p5.js for this project, it will make your life and the UI side of the project much easier
+
+Please pick something interesting or make something that is simple/bland more interesting
+
+i.e. don’t just build a basic calculator from a tutorial and give a presentation and tell me “It’s a calculator, it can do basic math functions”  since this pretty much provides almost no additional utility than the base language provides.
+
+Avoid spending a lot of time on HTML and CSS issues, this is not the primary focus of the project and can eat up a lot of time
