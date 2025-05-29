@@ -8,7 +8,11 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
     ],
   theme: {
-    extend: {},
+    extend: {
+    transitionProperty: {
+      'theme': 'background-color, border-color, color, fill, stroke',
+    },
+  },
   },
   plugins: [],
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { saveTodos, loadTodos } from "./storage";
 import { Check, X, Plus } from "lucide-react";
+import DarkModeToggle from "./DarkModeToggle";
 
 const categories = ["Work", "Personal", "Urgent"];
 const priorities = ["Low", "Medium", "High"];
@@ -58,7 +59,7 @@ export default function App() {
 
   return (
     <div className="w-96 h-[34rem] p-4 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl shadow-xl overflow-auto">
-      <h1 className="text-2xl font-bold mb-4">🗂️ To-Do List</h1>
+      <h1 className="text-2xl font-bold mb-4"><DarkModeToggle/> 🗂️ To-Do List</h1>
 
       {/* Form */}
       <div className="space-y-3 bg-gray-50 dark:bg-gray-800 p-3 rounded-lg shadow-inner">
