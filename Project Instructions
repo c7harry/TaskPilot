@@ -1,50 +1,84 @@
-This is a JavaScript Project, the focus should be on JavaScript but you may have HTML and CSS in your project if you would like
+# JavaScript Project Guidelines
 
-Your project NEEDs to have interactivity built into it
-It should provide some USEFUL and INTERESTING functionality
+This is a **JavaScript project**. The focus should be on JavaScript, though you may include **HTML** and **CSS** in your project if desired.
 
-Your project functions should NOT just be “hard-coded”, they should be programmatic and actually reusable or dynamic (if you don’t know how to do this I can work with you on this in class code reviews)
+---
 
-Various Project ideas:
-    Simulations
-    Animations (preferably with some amount of user interaction)
-    The essence of calculus
-    Small Games
-    Text based adventure games
+## ✅ Project Requirements
 
-Other easily scalable simple games like 
-    pong
-    invaders
-    asteroids
-    Space invaders
-    Shooters
+- Your project **must have interactivity** built into it.
+- It should provide some **useful** and **interesting functionality**.
+- Functions should **not be hard-coded** — they should be **programmatic**, **dynamic**, and **reusable**.
+  - _(If you're unsure how to do this, I can assist you during in-class code reviews.)_
 
-Other various simple games
+---
 
-Small Apps or widgets or Components
-Some kind of Chrome Extension or addon
+## 💡 Project Ideas
 
-Something that integrates with Google Sheets or some other APIs (if you want a bit of a challenge since we didn’t really cover fetch syntax yet)
+### Simulations & Animations
+- Simulations
+- Animations (preferably with user interaction)
+- The essence of calculus
 
-Automations (building interesting automations and scripts with airtable.com)
+### Games
+- Small games
+- Text-based adventure games
+- Classic arcade games:
+  - Pong
+  - Invaders
+  - Asteroids
+  - Space Invaders
+  - Shooters
 
-Send out emails
+### Applications / Widgets
+- Small apps, widgets, or components
+- A Chrome extension or browser add-on
 
-Create forms or PDFs from a database
+### API Integrations
+- Integrate with Google Sheets or other APIs  
+  _(Note: This is more advanced — we haven’t fully covered `fetch` syntax yet)_
 
+### Automations
+- Automate tasks using tools like [airtable.com](https://airtable.com)
+- Send out emails
+- Generate forms or PDFs from a database
 
-Pick something that YOU are topically interested in
-Math/ Science/ Nature/Music / Games / hobbies/ lifegoals etc
+---
 
+## 🎯 Choose a Topic You're Interested In
 
-Your project does not need to be a large application (this is hard to build without a JavaScript Framework, and impossible to build in a short time frame with only 1 or 2 beginners)
+Pick something **personally meaningful** — consider:
+- Math
+- Science
+- Nature
+- Music
+- Games
+- Hobbies
+- Life goals
 
-You may use any JavaScript Libraries you would like, including Frameworks if you so choose
+---
 
-I HIGHLY recommend using p5.js for this project, it will make your life and the UI side of the project much easier
+## ⚠️ Notes
 
-Please pick something interesting or make something that is simple/bland more interesting
+- Your project **does not** need to be a large application.  
+  _(Larger apps are difficult without a JavaScript framework and not feasible in a short time frame for beginners.)_
+  
+- You may use **any JavaScript libraries** or **frameworks**.
 
-i.e. don’t just build a basic calculator from a tutorial and give a presentation and tell me “It’s a calculator, it can do basic math functions”  since this pretty much provides almost no additional utility than the base language provides.
+- ✅ **Highly Recommended**: Use **p5.js** — it simplifies UI and creative coding significantly.
 
-Avoid spending a lot of time on HTML and CSS issues, this is not the primary focus of the project and can eat up a lot of time
+- Avoid spending excessive time on **HTML/CSS**. This project focuses on **JavaScript logic** and interactivity.
+
+---
+
+## 🚫 Avoid This
+
+Do **not** simply follow a basic tutorial (e.g., a calculator). For example:
+
+> ❌ “It’s a calculator, it can do basic math functions.”
+
+This offers **no added value** beyond what JavaScript already does.
+
+---
+
+Make it fun, dynamic, and meaningful. You’ve got this! 💪
