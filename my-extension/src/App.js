@@ -9,14 +9,14 @@ import "./App.css";
 const App = () => {
   const [tasks, setTasks] = useState([]);
   const [input, setInput] = useState("");
-  const [priority, setPriority] = useState("Medium");
+  const [priority, setPriority] = useState("");
   const [profile, setProfile] = useState("Work");
-  const [filterPriority, setFilterPriority] = useState("All");
+ const [filterPriority, setFilterPriority] = useState("");
   const [showCompleted, setShowCompleted] = useState(false);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("darkMode") === "true");
   const [showCalendar, setShowCalendar] = useState(false);
   const [dueDate, setDueDate] = useState("");
-
+  
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
     localStorage.setItem("darkMode", darkMode);
@@ -138,33 +138,34 @@ const App = () => {
         ))}
       </div>
 
-      <div className="flex flex-col gap-2 mb-4">
+      <div className="flex flex-col gap-3 mb-6">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && addTask()}
-          placeholder="Add a task..."
-          className="px-4 py-2 rounded-md border dark:bg-gray-800 border-gray-300 dark:border-gray-700"
+          placeholder="Add Task"
+          className="w-full px-4 py-2 rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
-        <div className="flex gap-2">
+        <div className="flex gap-3 flex-col sm:flex-row">
           <select
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
-            className="flex-1 px-3 py-2 rounded-md border dark:bg-gray-800 border-gray-300 dark:border-gray-700"
+            className="w-full px-3 py-2 rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           >
-            <option>High</option>
-            <option>Medium</option>
-            <option>Low</option>
+            <option value="" disabled hidden>Select Priority</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
           </select>
           <input
             type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
-            className="flex-1 px-3 py-2 rounded-md border dark:bg-gray-800 border-gray-300 dark:border-gray-700"
+            className="w-full px-3 py-2 rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
           <button
             onClick={addTask}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="w-full sm:w-auto px-4 py-2 text-sm font-semibold bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             Add
           </button>
@@ -177,6 +178,7 @@ const App = () => {
           onChange={(e) => setFilterPriority(e.target.value)}
           className="px-3 py-1 rounded-md border dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-sm"
         >
+          <option value="" disabled hidden>Sort By</option>
           <option value="All">All Priorities</option>
           <option value="High">High</option>
           <option value="Medium">Medium</option>
