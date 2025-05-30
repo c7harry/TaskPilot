@@ -1,146 +1,234 @@
-import React, { useState } from "react";
-import { Plus, Trash2, Sun, Moon } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check } from "lucide-react";
 import clsx from "clsx";
-import DarkModeToggle from "./DarkModeToggle";
+import { motion, AnimatePresence } from "framer-motion";
 
-const priorities = ["Low", "Medium", "High"];
-const profiles = ["Work", "Personal"];
-
-export default function App() {
-  const [profile, setProfile] = useState("Work");
-  const [tasks, setTasks] = useState({ Work: [], Personal: [] });
-  const [newTask, setNewTask] = useState("");
+const App = () => {
+  const [tasks, setTasks] = useState([]);
+  const [input, setInput] = useState("");
   const [priority, setPriority] = useState("Medium");
+  const [profile, setProfile] = useState("Work");
+  const [filterPriority, setFilterPriority] = useState("All");
+  const [showCompleted, setShowCompleted] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("darkMode") === "true");
 
-  const currentTasks = tasks[profile];
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", darkMode);
+    localStorage.setItem("darkMode", darkMode);
+  }, [darkMode]);
 
   const addTask = () => {
-    if (!newTask.trim()) return;
-    const newEntry = {
+    if (!input.trim()) return;
+    const newTask = {
       id: Date.now(),
-      text: newTask.trim(),
-      completed: false,
+      text: input.trim(),
       priority,
+      profile,
+      completed: false,
     };
-    setTasks({
-      ...tasks,
-      [profile]: [...tasks[profile], newEntry],
-    });
-    setNewTask("");
-    setPriority("Medium");
-  };
-
-  const toggleComplete = (id) => {
-    setTasks({
-      ...tasks,
-      [profile]: tasks[profile].map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      ),
-    });
+    setTasks([newTask, ...tasks]);
+    setInput("");
   };
 
   const deleteTask = (id) => {
-    setTasks({
-      ...tasks,
-      [profile]: tasks[profile].filter((task) => task.id !== id),
-    });
+    setTasks(tasks.filter((task) => task.id !== id));
+  };
+
+  const toggleComplete = (id) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, completed: !task.completed } : task
+      )
+    );
+  };
+
+  const filteredTasks = tasks.filter(
+    (task) =>
+      task.profile === profile &&
+      !task.completed &&
+      (filterPriority === "All" || task.priority === filterPriority)
+  );
+
+  const completedTasks = tasks.filter(
+    (task) => task.profile === profile && task.completed
+  );
+
+  const priorityIcon = {
+    High: "🔴",
+    Medium: "🟡",
+    Low: "🟢",
   };
 
   return (
-    <div className="w-96 h-[34rem] bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-2xl shadow-2xl p-5 flex flex-col gap-4 transition-all">
-
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold">🗂️ {profile} Tasks</h1>
-        <DarkModeToggle />
+    <div className="min-h-screen p-4 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white w-[400px] overflow-y-auto">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">To-Do List</h1>
+        <button onClick={() => setDarkMode(!darkMode)}>
+          {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
       </div>
 
-      {/* Profile Selector */}
-      <div className="flex gap-2 justify-center">
-        {profiles.map((p) => (
+      {/* Profile Switcher */}
+      <div className="flex justify-center space-x-4 mb-4">
+        {["Work", "Personal"].map((prof) => (
           <button
-            key={p}
-            onClick={() => setProfile(p)}
+            key={prof}
+            onClick={() => setProfile(prof)}
             className={clsx(
-              "px-3 py-1 rounded-full text-sm font-medium transition",
-              profile === p
+              "px-4 py-1 rounded-full font-medium",
+              profile === prof
                 ? "bg-blue-600 text-white"
-                : "bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200"
+                : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-white"
             )}
           >
-            {p}
+            {prof}
           </button>
         ))}
       </div>
 
-      {/* Task Input */}
-      <div className="flex items-center gap-2">
+      {/* Input Section */}
+      <div className="flex flex-col gap-2 mb-4">
         <input
-          type="text"
-          placeholder="New task..."
-          className="flex-1 p-2 rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm focus:outline-none"
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && addTask()}
+          placeholder="Add a task..."
+          className="px-4 py-2 rounded-md border dark:bg-gray-800 border-gray-300 dark:border-gray-700"
         />
+        <div className="flex gap-2">
+          <select
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            className="flex-1 px-3 py-2 rounded-md border dark:bg-gray-800 border-gray-300 dark:border-gray-700"
+          >
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+          </select>
+          <button
+            onClick={addTask}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            Add
+          </button>
+        </div>
+      </div>
+
+      {/* Filter Section */}
+      <div className="flex justify-end mb-3">
         <select
-          value={priority}
-          onChange={(e) => setPriority(e.target.value)}
-          className="text-sm p-2 rounded-md bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700"
+          value={filterPriority}
+          onChange={(e) => setFilterPriority(e.target.value)}
+          className="px-3 py-1 rounded-md border dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-sm"
         >
-          {priorities.map((p) => (
-            <option key={p} value={p}>{p}</option>
-          ))}
+          <option value="All">All Priorities</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
         </select>
-        <button
-          onClick={addTask}
-          className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition"
-        >
-          <Plus size={18} />
-        </button>
       </div>
 
       {/* Task List */}
-      <div className="flex-1 overflow-auto border-t border-gray-200 dark:border-gray-700 pt-3 space-y-2">
-        {currentTasks.length === 0 ? (
-          <p className="text-center text-gray-400 text-sm">No tasks for {profile} profile.</p>
-        ) : (
-          currentTasks.map((task) => (
-            <div
+      <div className="space-y-2">
+        <AnimatePresence>
+          {filteredTasks.map((task) => (
+            <motion.div
               key={task.id}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
               className={clsx(
-                "flex items-center justify-between p-3 rounded-md border text-sm",
-                "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700",
-                task.completed && "opacity-60 line-through"
+                "flex items-center justify-between p-3 rounded-md border",
+                "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
               )}
             >
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col">
                 <span className="font-medium">{task.text}</span>
                 <span
                   className={clsx(
-                    "text-xs w-fit px-2 py-0.5 rounded-full font-semibold",
-                    task.priority === "High" && "bg-red-100 text-red-700 dark:bg-red-700 dark:text-red-100",
-                    task.priority === "Medium" && "bg-yellow-100 text-yellow-700 dark:bg-yellow-700 dark:text-yellow-100",
-                    task.priority === "Low" && "bg-green-100 text-green-700 dark:bg-green-700 dark:text-green-100"
+                    "text-xs mt-1 px-2 py-0.5 rounded-full w-fit font-semibold",
+                    task.priority === "High" &&
+                      "bg-red-100 text-red-700 dark:bg-red-700 dark:text-white",
+                    task.priority === "Medium" &&
+                      "bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-white",
+                    task.priority === "Low" &&
+                      "bg-green-100 text-green-800 dark:bg-green-600 dark:text-white"
                   )}
                 >
-                  {task.priority}
+                  {priorityIcon[task.priority]} {task.priority}
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={task.completed}
-                  onChange={() => toggleComplete(task.id)}
-                  className="accent-blue-600"
-                />
-                <button onClick={() => deleteTask(task.id)} className="text-red-500 hover:text-red-700">
+                <button
+                  onClick={() => toggleComplete(task.id)}
+                  className="flex items-center justify-center px-2 py-1 rounded-full border border-teal-500 bg-teal-50 text-teal-700 hover:bg-teal-100 hover:scale-110 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  aria-label={`Mark task as complete: ${task.text}`}
+                >
+                  <Check size={14} />
+                </button>
+                <button
+                  onClick={() => deleteTask(task.id)}
+                  className="text-red-500 hover:text-red-700"
+                  aria-label={`Delete task: ${task.text}`}
+                >
                   <Trash2 size={16} />
                 </button>
               </div>
-            </div>
-          ))
-        )}
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+
+      {/* Completed Tasks Section */}
+      <div className="mt-6 border-t pt-4 dark:border-gray-700">
+        <button
+          onClick={() => setShowCompleted(!showCompleted)}
+          className="flex items-center gap-2 text-sm font-medium text-blue-600"
+        >
+          {showCompleted ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          {showCompleted ? "Hide" : "Show"} Completed Tasks ({completedTasks.length})
+        </button>
+
+        <AnimatePresence>
+          {showCompleted && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-3 space-y-2 overflow-hidden"
+            >
+              {completedTasks.map((task) => (
+                <motion.div
+                  key={task.id}
+                  layout
+                  className="flex justify-between items-center p-3 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-500"
+                >
+                  <span className="line-through">{task.text}</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => toggleComplete(task.id)}
+                      className="flex items-center gap-1 px-2 py-0.5 rounded-full border border-teal-500 bg-teal-50 text-teal-700 hover:bg-teal-100 hover:scale-105 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                      aria-label={`Restore task: ${task.text}`}
+                    >
+                      <RotateCcw size={14} />
+                      <span className="text-xs font-semibold">Restore</span>
+                    </button>
+                    <button
+                      onClick={() => deleteTask(task.id)}
+                      className="text-red-500 hover:text-red-700"
+                      aria-label={`Delete task: ${task.text}`}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
-}
+};
+
+export default App;
