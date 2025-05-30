@@ -11,7 +11,7 @@ const App = () => {
   const [input, setInput] = useState("");
   const [priority, setPriority] = useState("");
   const [profile, setProfile] = useState("Work");
- const [filterPriority, setFilterPriority] = useState("");
+ const [filterPriority, setFilterPriority] = useState("All");
   const [showCompleted, setShowCompleted] = useState(false);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("darkMode") === "true");
   const [showCalendar, setShowCalendar] = useState(false);
@@ -153,9 +153,9 @@ const App = () => {
             className="w-full px-3 py-2 rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           >
             <option value="" disabled hidden>Select Priority</option>
-            <option value="High">High</option>
-            <option value="Medium">Medium</option>
-            <option value="Low">Low</option>
+            <option value="High">🔴 High</option>
+            <option value="Medium">🟡 Medium</option>
+            <option value="Low">🟢 Low</option>
           </select>
           <input
             type="date"
@@ -174,16 +174,15 @@ const App = () => {
 
       <div className="flex justify-between items-center mb-4">
         <select
-          value={filterPriority}
-          onChange={(e) => setFilterPriority(e.target.value)}
-          className="w-full sm:w-auto px-3 py-2 rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-        >
-          <option value="" disabled hidden>Sort By</option>
-          <option value="All">All Priorities</option>
-          <option value="High">High</option>
-          <option value="Medium">Medium</option>
-          <option value="Low">Low</option>
-        </select>
+        value={filterPriority}
+        onChange={(e) => setFilterPriority(e.target.value)}
+        className="w-full sm:w-auto px-3 py-2 rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+      >
+        <option value="All">📋 All Priorities</option>
+        <option value="High">🔴 High</option>
+        <option value="Medium">🟡 Medium</option>
+        <option value="Low">🟢 Low</option>
+      </select>
         <button
           onClick={() => setShowCalendar(!showCalendar)}
           className="flex items-center gap-1 px-4 py-2 text-sm font-semibold bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
