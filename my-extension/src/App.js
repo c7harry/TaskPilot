@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check, CalendarDays } from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import './App.css';
+import "./App.css";
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
@@ -14,37 +14,13 @@ const App = () => {
   const [filterPriority, setFilterPriority] = useState("All");
   const [showCompleted, setShowCompleted] = useState(false);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("darkMode") === "true");
-  const [selectedDate, setSelectedDate] = useState("");
   const [showCalendar, setShowCalendar] = useState(false);
-  const [calendarDate, setCalendarDate] = useState(null);
+  const [dueDate, setDueDate] = useState("");
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
     localStorage.setItem("darkMode", darkMode);
   }, [darkMode]);
-
-  useEffect(() => {
-    if (Notification.permission !== "granted") {
-      Notification.requestPermission();
-    }
-  }, []);
-
-  useEffect(() => {
-    const now = new Date();
-    tasks.forEach((task) => {
-      if (
-        task.dueDate &&
-        !task.notified &&
-        !task.completed &&
-        new Date(task.dueDate).toDateString() === now.toDateString()
-      ) {
-        new Notification(`Task Reminder: ${task.text}`, {
-          body: `Due Today!`,
-        });
-        task.notified = true;
-      }
-    });
-  }, [tasks]);
 
   const addTask = () => {
     if (!input.trim()) return;
@@ -53,13 +29,12 @@ const App = () => {
       text: input.trim(),
       priority,
       profile,
-      dueDate: selectedDate,
+      dueDate,
       completed: false,
-      notified: false,
     };
     setTasks([newTask, ...tasks]);
     setInput("");
-    setSelectedDate("");
+    setDueDate("");
   };
 
   const deleteTask = (id) => {
@@ -74,22 +49,54 @@ const App = () => {
     );
   };
 
+  const filteredTasks = tasks.filter(
+    (task) =>
+      task.profile === profile &&
+      !task.completed &&
+      (filterPriority === "All" || task.priority === filterPriority)
+  );
+
+  const completedTasks = tasks.filter(
+    (task) => task.profile === profile && task.completed
+  );
+
   const priorityIcon = {
     High: "🔴",
     Medium: "🟡",
     Low: "🟢",
   };
 
-  const filteredTasks = tasks.filter((task) => {
-    const matchesProfile = task.profile === profile;
-    const matchesPriority = filterPriority === "All" || task.priority === filterPriority;
-    const matchesDate = calendarDate
-      ? task.dueDate && new Date(task.dueDate).toDateString() === calendarDate.toDateString()
-      : true;
-    return matchesProfile && !task.completed && matchesPriority && matchesDate;
-  });
-
-  const completedTasks = tasks.filter((task) => task.profile === profile && task.completed);
+  const tileContent = ({ date, view }) => {
+    if (view === "month") {
+      const dayTasks = tasks.filter(
+        (task) =>
+          new Date(task.dueDate).toDateString() === date.toDateString() &&
+          task.profile === profile
+      );
+      if (dayTasks.length > 0) {
+        return (
+          <div className="tooltip inline-block relative cursor-default">
+            <div className="flex flex-wrap gap-1 justify-center">
+              {dayTasks.map((task) => (
+                <span
+                  key={task.id}
+                  className="inline-block w-3 h-3 rounded-full bg-blue-500"
+                ></span>
+              ))}
+            </div>
+            <div className="tooltip-content">
+              {dayTasks.map((task) => (
+                <div key={task.id} className="text-sm">
+                  {task.text} ({task.priority})
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+    }
+    return null;
+  };
 
   return (
     <div className="min-h-screen p-4 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white w-[400px] overflow-y-auto">
@@ -100,7 +107,6 @@ const App = () => {
         </button>
       </div>
 
-      {/* Profile Switcher */}
       <div className="flex justify-center space-x-4 mb-4">
         {["Work", "Personal"].map((prof) => (
           <button
@@ -118,7 +124,6 @@ const App = () => {
         ))}
       </div>
 
-      {/* Input Section */}
       <div className="flex flex-col gap-2 mb-4">
         <input
           value={input}
@@ -139,8 +144,8 @@ const App = () => {
           </select>
           <input
             type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
             className="flex-1 px-3 py-2 rounded-md border dark:bg-gray-800 border-gray-300 dark:border-gray-700"
           />
           <button
@@ -152,8 +157,7 @@ const App = () => {
         </div>
       </div>
 
-      {/* Filter Section */}
-      <div className="flex justify-between items-center mb-3">
+      <div className="flex justify-between items-center mb-4">
         <select
           value={filterPriority}
           onChange={(e) => setFilterPriority(e.target.value)}
@@ -164,36 +168,24 @@ const App = () => {
           <option value="Medium">Medium</option>
           <option value="Low">Low</option>
         </select>
-
         <button
           onClick={() => setShowCalendar(!showCalendar)}
-          className="flex items-center gap-1 text-purple-600 text-sm"
+          className="text-blue-600 text-sm"
         >
-          <CalendarDays size={16} />
           {showCalendar ? "Hide Calendar" : "Show Calendar"}
         </button>
       </div>
 
-      {/* Calendar */}
       {showCalendar && (
-        <div className="mb-4 rounded-md border dark:border-gray-700">
+        <div className="mb-4 relative">
           <Calendar
-            onChange={setCalendarDate}
-            value={calendarDate}
-            tileClassName={({ date, view }) =>
-              tasks.some(
-                (task) =>
-                  task.dueDate &&
-                  new Date(task.dueDate).toDateString() === date.toDateString()
-              )
-                ? "bg-blue-200 dark:bg-blue-700"
-                : null
-            }
+            tileContent={tileContent}
+            className="w-full rounded-lg border dark:border-gray-700 p-2 bg-white dark:bg-gray-800"
+            tileClassName="group"
           />
         </div>
       )}
 
-      {/* Task List */}
       <div className="space-y-2">
         <AnimatePresence>
           {filteredTasks.map((task) => (
@@ -209,39 +201,35 @@ const App = () => {
             >
               <div className="flex flex-col">
                 <span className="font-medium">{task.text}</span>
-                <div className="flex gap-2 text-xs mt-1">
-                  <span
-                    className={clsx(
-                      "px-2 py-0.5 rounded-full font-semibold",
-                      task.priority === "High" &&
-                        "bg-red-100 text-red-700 dark:bg-red-700 dark:text-white",
-                      task.priority === "Medium" &&
-                        "bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-white",
-                      task.priority === "Low" &&
-                        "bg-green-100 text-green-800 dark:bg-green-600 dark:text-white"
-                    )}
-                  >
-                    {priorityIcon[task.priority]} {task.priority}
+                {task.dueDate && (
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    Due: {new Date(task.dueDate).toLocaleDateString()}
                   </span>
-                  {task.dueDate && (
-                    <span className="text-gray-500 dark:text-gray-400">
-                      Due: {new Date(task.dueDate).toLocaleDateString()}
-                    </span>
+                )}
+                <span
+                  className={clsx(
+                    "text-xs mt-1 px-2 py-0.5 rounded-full w-fit font-semibold",
+                    task.priority === "High" &&
+                      "bg-red-100 text-red-700 dark:bg-red-700 dark:text-white",
+                    task.priority === "Medium" &&
+                      "bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-white",
+                    task.priority === "Low" &&
+                      "bg-green-100 text-green-800 dark:bg-green-600 dark:text-white"
                   )}
-                </div>
+                >
+                  {priorityIcon[task.priority]} {task.priority}
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => toggleComplete(task.id)}
                   className="flex items-center justify-center px-2 py-1 rounded-full border border-teal-500 bg-teal-50 text-teal-700 hover:bg-teal-100 hover:scale-110 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400"
-                  aria-label={`Mark task as complete: ${task.text}`}
                 >
                   <Check size={14} />
                 </button>
                 <button
                   onClick={() => deleteTask(task.id)}
                   className="text-red-500 hover:text-red-700"
-                  aria-label={`Delete task: ${task.text}`}
                 >
                   <Trash2 size={16} />
                 </button>
@@ -251,7 +239,6 @@ const App = () => {
         </AnimatePresence>
       </div>
 
-      {/* Completed Tasks Section */}
       <div className="mt-6 border-t pt-4 dark:border-gray-700">
         <button
           onClick={() => setShowCompleted(!showCompleted)}
@@ -280,7 +267,6 @@ const App = () => {
                     <button
                       onClick={() => toggleComplete(task.id)}
                       className="flex items-center gap-1 px-2 py-0.5 rounded-full border border-teal-500 bg-teal-50 text-teal-700 hover:bg-teal-100 hover:scale-105 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400"
-                      aria-label={`Restore task: ${task.text}`}
                     >
                       <RotateCcw size={14} />
                       <span className="text-xs font-semibold">Restore</span>
@@ -288,7 +274,6 @@ const App = () => {
                     <button
                       onClick={() => deleteTask(task.id)}
                       className="text-red-500 hover:text-red-700"
-                      aria-label={`Delete task: ${task.text}`}
                     >
                       <Trash2 size={16} />
                     </button>

@@ -1,14 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "My React Tailwind Extension",
+  "name": "TaskPilot",
   "version": "1.0",
   "description": "A React + Tailwind Chrome Extension",
   "action": {
     "default_popup": "index.html",
     "default_icon": {
-      "16": "icon16.png",
-      "48": "icon48.png",
-      "128": "icon128.png"
+      "16": "logo.png",
+      "48": "logo.png",
+      "128": "logo.png"
     }
   },
   "permissions": [],
