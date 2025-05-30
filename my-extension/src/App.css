@@ -23,6 +23,15 @@ input:focus, select:focus {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
 }
 
+input:hover,
+select:hover,
+button:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
 /* Calendar modern styles */
 .react-calendar {
   background-color: #ffffff;

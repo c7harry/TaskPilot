@@ -186,10 +186,22 @@ const App = () => {
         </select>
         <button
           onClick={() => setShowCalendar(!showCalendar)}
-          className="text-blue-600 text-sm"
+          className="flex items-center gap-1 px-4 py-2 text-sm font-semibold bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          aria-label={showCalendar ? "Hide Calendar" : "Show Calendar"}
         >
-          {showCalendar ? "Hide Calendar" : "Show Calendar"}
+          {showCalendar ? (
+            <>
+              <ChevronUp size={16} />
+              Hide Calendar
+            </>
+          ) : (
+            <>
+              <ChevronDown size={16} />
+              Show Calendar
+            </>
+          )}
         </button>
+
       </div>
 
       {showCalendar && (
