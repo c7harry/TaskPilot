@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check } from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check, PlusCircle, Flag,} from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import Calendar from "react-calendar";
@@ -11,7 +11,7 @@ const App = () => {
   const [input, setInput] = useState("");
   const [priority, setPriority] = useState("");
   const [profile, setProfile] = useState("Work");
- const [filterPriority, setFilterPriority] = useState("All");
+  const [filterPriority, setFilterPriority] = useState("All");
   const [showCompleted, setShowCompleted] = useState(false);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("darkMode") === "true");
   const [showCalendar, setShowCalendar] = useState(false);
@@ -129,7 +129,7 @@ const App = () => {
             className={clsx(
               "px-4 py-1 rounded-full font-medium",
               profile === prof
-                ? "bg-blue-600 text-white"
+                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
                 : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-white"
             )}
           >
@@ -165,9 +165,9 @@ const App = () => {
           />
           <button
             onClick={addTask}
-            className="w-full sm:w-auto px-4 py-2 text-sm font-semibold bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2 text-sm font-semibold rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md hover:scale-105 transition-transform duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
-            Add
+            <PlusCircle size={18} />
           </button>
         </div>
       </div>
@@ -178,14 +178,14 @@ const App = () => {
         onChange={(e) => setFilterPriority(e.target.value)}
         className="w-full sm:w-auto px-3 py-2 rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
       >
-        <option value="All">📋 All Priorities</option>
+        <option value="All">All Priorities</option>
         <option value="High">🔴 High</option>
         <option value="Medium">🟡 Medium</option>
         <option value="Low">🟢 Low</option>
       </select>
         <button
           onClick={() => setShowCalendar(!showCalendar)}
-          className="flex items-center gap-1 px-4 py-2 text-sm font-semibold bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          className="flex items-center gap-1 px-4 py-2 text-sm font-semibold bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           aria-label={showCalendar ? "Hide Calendar" : "Show Calendar"}
         >
           {showCalendar ? (
