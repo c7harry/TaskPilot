@@ -94,27 +94,66 @@
 /* Tooltip container */
 .tooltip {
   position: relative;
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  padding-top: 8px;
 }
 
-/* Tooltip text (hidden by default) */
+.tooltip .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Tooltip content box */
 .tooltip-content {
   visibility: hidden;
-  width: max-content;
-  background-color: #333;
+  background-color: #1f2937; 
   color: #fff;
   text-align: left;
   padding: 6px 10px;
   border-radius: 4px;
   position: absolute;
-  z-index: 10;
-  bottom: 100%;
+  z-index: 1000;
+  bottom: 120%;
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
   font-size: 12px;
   opacity: 0;
   transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.tooltip:hover .tooltip-content {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Color-coded task lines */
+.tooltip-task {
+  margin-bottom: 4px;
+  padding-left: 8px;
+  border-left: 4px solid;
+  font-size: 12px;
+}
+
+.tooltip-task.high {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.tooltip-task.medium {
+  border-color: #facc15;
+  color: #facc15;
+}
+
+.tooltip-task.low {
+  border-color: #22c55e;
+  color: #22c55e;
 }
 
 /* Show tooltip on hover */

@@ -70,23 +70,36 @@ const App = () => {
     if (view === "month") {
       const dayTasks = tasks.filter(
         (task) =>
+          task.dueDate &&
           new Date(task.dueDate).toDateString() === date.toDateString() &&
           task.profile === profile
       );
+
       if (dayTasks.length > 0) {
         return (
           <div className="tooltip">
-            <div className="flex flex-wrap gap-1 justify-center">
+            <div className="flex flex-wrap gap-[2px] justify-center items-center">
               {dayTasks.map((task) => (
                 <span
                   key={task.id}
-                  className="inline-block w-2.5 h-2.5 rounded-full bg-blue-500"
+                  className="dot"
+                  style={{
+                    backgroundColor:
+                      task.priority === "High"
+                        ? "#ef4444"
+                        : task.priority === "Medium"
+                        ? "#facc15"
+                        : "#22c55e",
+                  }}
                 ></span>
               ))}
             </div>
             <div className="tooltip-content">
               {dayTasks.map((task) => (
-                <div key={task.id}>
+                <div
+                  key={task.id}
+                  className={`tooltip-task ${task.priority.toLowerCase()}`}
+                >
                   {task.text} ({task.priority})
                 </div>
               ))}
