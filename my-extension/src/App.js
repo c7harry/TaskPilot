@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check } from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check, CalendarDays } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import './App.css';
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
@@ -11,11 +14,37 @@ const App = () => {
   const [filterPriority, setFilterPriority] = useState("All");
   const [showCompleted, setShowCompleted] = useState(false);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("darkMode") === "true");
+  const [selectedDate, setSelectedDate] = useState("");
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [calendarDate, setCalendarDate] = useState(null);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
     localStorage.setItem("darkMode", darkMode);
   }, [darkMode]);
+
+  useEffect(() => {
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  useEffect(() => {
+    const now = new Date();
+    tasks.forEach((task) => {
+      if (
+        task.dueDate &&
+        !task.notified &&
+        !task.completed &&
+        new Date(task.dueDate).toDateString() === now.toDateString()
+      ) {
+        new Notification(`Task Reminder: ${task.text}`, {
+          body: `Due Today!`,
+        });
+        task.notified = true;
+      }
+    });
+  }, [tasks]);
 
   const addTask = () => {
     if (!input.trim()) return;
@@ -24,10 +53,13 @@ const App = () => {
       text: input.trim(),
       priority,
       profile,
+      dueDate: selectedDate,
       completed: false,
+      notified: false,
     };
     setTasks([newTask, ...tasks]);
     setInput("");
+    setSelectedDate("");
   };
 
   const deleteTask = (id) => {
@@ -42,22 +74,22 @@ const App = () => {
     );
   };
 
-  const filteredTasks = tasks.filter(
-    (task) =>
-      task.profile === profile &&
-      !task.completed &&
-      (filterPriority === "All" || task.priority === filterPriority)
-  );
-
-  const completedTasks = tasks.filter(
-    (task) => task.profile === profile && task.completed
-  );
-
   const priorityIcon = {
     High: "🔴",
     Medium: "🟡",
     Low: "🟢",
   };
+
+  const filteredTasks = tasks.filter((task) => {
+    const matchesProfile = task.profile === profile;
+    const matchesPriority = filterPriority === "All" || task.priority === filterPriority;
+    const matchesDate = calendarDate
+      ? task.dueDate && new Date(task.dueDate).toDateString() === calendarDate.toDateString()
+      : true;
+    return matchesProfile && !task.completed && matchesPriority && matchesDate;
+  });
+
+  const completedTasks = tasks.filter((task) => task.profile === profile && task.completed);
 
   return (
     <div className="min-h-screen p-4 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white w-[400px] overflow-y-auto">
@@ -105,6 +137,12 @@ const App = () => {
             <option>Medium</option>
             <option>Low</option>
           </select>
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="flex-1 px-3 py-2 rounded-md border dark:bg-gray-800 border-gray-300 dark:border-gray-700"
+          />
           <button
             onClick={addTask}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
@@ -115,7 +153,7 @@ const App = () => {
       </div>
 
       {/* Filter Section */}
-      <div className="flex justify-end mb-3">
+      <div className="flex justify-between items-center mb-3">
         <select
           value={filterPriority}
           onChange={(e) => setFilterPriority(e.target.value)}
@@ -126,7 +164,34 @@ const App = () => {
           <option value="Medium">Medium</option>
           <option value="Low">Low</option>
         </select>
+
+        <button
+          onClick={() => setShowCalendar(!showCalendar)}
+          className="flex items-center gap-1 text-purple-600 text-sm"
+        >
+          <CalendarDays size={16} />
+          {showCalendar ? "Hide Calendar" : "Show Calendar"}
+        </button>
       </div>
+
+      {/* Calendar */}
+      {showCalendar && (
+        <div className="mb-4 rounded-md border dark:border-gray-700">
+          <Calendar
+            onChange={setCalendarDate}
+            value={calendarDate}
+            tileClassName={({ date, view }) =>
+              tasks.some(
+                (task) =>
+                  task.dueDate &&
+                  new Date(task.dueDate).toDateString() === date.toDateString()
+              )
+                ? "bg-blue-200 dark:bg-blue-700"
+                : null
+            }
+          />
+        </div>
+      )}
 
       {/* Task List */}
       <div className="space-y-2">
@@ -144,19 +209,26 @@ const App = () => {
             >
               <div className="flex flex-col">
                 <span className="font-medium">{task.text}</span>
-                <span
-                  className={clsx(
-                    "text-xs mt-1 px-2 py-0.5 rounded-full w-fit font-semibold",
-                    task.priority === "High" &&
-                      "bg-red-100 text-red-700 dark:bg-red-700 dark:text-white",
-                    task.priority === "Medium" &&
-                      "bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-white",
-                    task.priority === "Low" &&
-                      "bg-green-100 text-green-800 dark:bg-green-600 dark:text-white"
+                <div className="flex gap-2 text-xs mt-1">
+                  <span
+                    className={clsx(
+                      "px-2 py-0.5 rounded-full font-semibold",
+                      task.priority === "High" &&
+                        "bg-red-100 text-red-700 dark:bg-red-700 dark:text-white",
+                      task.priority === "Medium" &&
+                        "bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-white",
+                      task.priority === "Low" &&
+                        "bg-green-100 text-green-800 dark:bg-green-600 dark:text-white"
+                    )}
+                  >
+                    {priorityIcon[task.priority]} {task.priority}
+                  </span>
+                  {task.dueDate && (
+                    <span className="text-gray-500 dark:text-gray-400">
+                      Due: {new Date(task.dueDate).toLocaleDateString()}
+                    </span>
                   )}
-                >
-                  {priorityIcon[task.priority]} {task.priority}
-                </span>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <button
