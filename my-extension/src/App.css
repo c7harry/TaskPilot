@@ -1,104 +1,113 @@
 /* App.css */
 
+body {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  background-color: #f9fafb;
+}
+
 .App {
   text-align: center;
 }
 
+/* General spacing */
+* {
+  box-sizing: border-box;
+}
+
+input, select, button {
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+/* Calendar modern styles */
 .react-calendar {
   background-color: #ffffff;
   color: #000000;
   border: none;
-  border-radius: 8px;
-  padding: 10px;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .react-calendar__tile {
   background: none;
   border: none;
-  padding: 10px;
+  padding: 12px;
   text-align: center;
   line-height: 1.5;
-  transition: background-color 0.3s;
+  font-weight: 500;
+  border-radius: 8px;
   position: relative;
   overflow: visible !important; 
-}
-
-.react-calendar__tile--now {
-  background: #e6f7ff;
-  border-radius: 50%;
-}
-
-.react-calendar__tile--active {
-  background: #1890ff;
-  color: white;
-  border-radius: 50%;
-}
-
-.react-calendar__tile--hasActive {
-  background: #bae7ff;
-  border-radius: 50%;
+  transition: background-color 0.3s, transform 0.2s ease;
 }
 
 .react-calendar__tile:hover {
-  background-color: #f5f5f5;
-  border-radius: 50%;
+  background-color: #e0f2fe;
+  transform: scale(1.05);
   cursor: default;
 }
 
-/* Dark mode styles */
+.react-calendar__tile--now {
+  background: #dbeafe;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.react-calendar__tile--active {
+  background: #3b82f6;
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.react-calendar__tile--hasActive {
+  background: #93c5fd;
+  border-radius: 8px;
+}
+
 .dark .react-calendar {
   background-color: #1f2937;
   color: #f9fafb;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
 
-.dark .react-calendar__tile {
-  background: none;
-  color: #f9fafb;
+.dark .react-calendar__tile:hover {
+  background-color: #334155;
 }
 
 .dark .react-calendar__tile--now {
-  background: #374151;
+  background: #334155;
 }
 
 .dark .react-calendar__tile--active {
   background: #2563eb;
-  color: white;
 }
 
 .dark .react-calendar__tile--hasActive {
   background: #1e40af;
 }
 
-.dark .react-calendar__tile:hover {
-  background-color: #374151;
-  cursor: default;
-}
-
 /* Remove underline from weekday headers */
 .react-calendar__month-view__weekdays__weekday abbr {
   text-decoration: none;
+  font-weight: 600;
+  color: #64748b;
 }
 
-/* Tooltip styling */
-.react-tooltip {
-  background-color: #333;
-  color: #fff;
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  max-width: 200px;
-  text-align: left;
-  z-index: 1000;
+.dark .react-calendar__month-view__weekdays__weekday abbr {
+  color: #94a3b8;
 }
 
-/* Tooltip container */
+/* Tooltip modern */
 .tooltip {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   height: 100%;
-  padding-top: 8px;
+  padding-top: 6px;
 }
 
 .tooltip .dot {
@@ -107,38 +116,39 @@
   border-radius: 50%;
 }
 
-/* Tooltip content box */
 .tooltip-content {
   visibility: hidden;
-  background-color: #1f2937; 
+  background-color: #1f2937;
   color: #fff;
   text-align: left;
-  padding: 6px 10px;
-  border-radius: 4px;
+  padding: 8px 12px;
+  border-radius: 6px;
   position: absolute;
   z-index: 1000;
-  bottom: 120%;
+  bottom: 130%;
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
   font-size: 12px;
+  font-weight: 500;
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s, transform 0.3s;
   pointer-events: none;
 }
 
 .tooltip:hover .tooltip-content {
   visibility: visible;
   opacity: 1;
-  pointer-events: auto;
+  transform: translateX(-50%) translateY(-4px);
 }
 
 /* Color-coded task lines */
 .tooltip-task {
   margin-bottom: 4px;
   padding-left: 8px;
-  border-left: 4px solid;
+  border-left: 3px solid;
   font-size: 12px;
+  font-weight: 500;
 }
 
 .tooltip-task.high {
@@ -156,8 +166,57 @@
   color: #22c55e;
 }
 
-/* Show tooltip on hover */
-.tooltip:hover .tooltip-content {
-  visibility: visible;
-  opacity: 1;
+/* Task item modern tweaks */
+button {
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+/* Input + Select modern */
+input, select {
+  font-size: 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #fff;
+}
+
+.dark input, .dark select {
+  background-color: #374151;
+  color: #f9fafb;
+  border-color: #4b5563;
+}
+
+input::placeholder {
+  color: #9ca3af;
+}
+
+.dark input::placeholder {
+  color: #9ca3af;
+}
+
+/* Task cards */
+.motion-div {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.motion-div:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.dark .motion-div {
+  box-shadow: 0 1px 4px rgba(255,255,255,0.05);
+}
+
+.dark .motion-div:hover {
+  box-shadow: 0 4px 12px rgba(255,255,255,0.1);
 }

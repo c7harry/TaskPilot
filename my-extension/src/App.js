@@ -67,13 +67,14 @@ const App = () => {
   };
 
   const tileContent = ({ date, view }) => {
-    if (view === "month") {
-      const dayTasks = tasks.filter(
-        (task) =>
-          task.dueDate &&
-          new Date(task.dueDate).toDateString() === date.toDateString() &&
-          task.profile === profile
-      );
+  if (view === "month") {
+    const dayTasks = tasks.filter(
+      (task) =>
+        task.dueDate &&
+        !task.completed &&
+        new Date(task.dueDate).toDateString() === date.toDateString() &&
+        task.profile === profile
+    );
 
       if (dayTasks.length > 0) {
         return (
