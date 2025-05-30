@@ -196,6 +196,8 @@ const App = () => {
             tileContent={tileContent}
             className="w-full rounded-lg border dark:border-gray-700 p-2 bg-white dark:bg-gray-800"
             tileClassName="group"
+            prev2Label={null} 
+            next2Label={null}
           />
         </div>
       )}
