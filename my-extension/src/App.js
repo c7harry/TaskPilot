@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check, PlusCircle, Flag,} from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check, PlusCircle,} from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import Calendar from "react-calendar";
@@ -115,7 +115,9 @@ const App = () => {
   return (
     <div className="min-h-screen p-4 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white w-[400px] overflow-y-auto">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">To-Do List</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent text-center w-full">
+          TaskPilot
+        </h1>
         <button onClick={() => setDarkMode(!darkMode)}>
           {darkMode ? <Sun size={20} /> : <Moon size={20} />}
         </button>
@@ -191,12 +193,12 @@ const App = () => {
           {showCalendar ? (
             <>
               <ChevronUp size={16} />
-              Hide Calendar
+              Calendar
             </>
           ) : (
             <>
               <ChevronDown size={16} />
-              Show Calendar
+              Calendar
             </>
           )}
         </button>
