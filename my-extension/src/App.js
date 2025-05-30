@@ -75,18 +75,18 @@ const App = () => {
       );
       if (dayTasks.length > 0) {
         return (
-          <div className="tooltip inline-block relative cursor-default">
+          <div className="tooltip">
             <div className="flex flex-wrap gap-1 justify-center">
               {dayTasks.map((task) => (
                 <span
                   key={task.id}
-                  className="inline-block w-3 h-3 rounded-full bg-blue-500"
+                  className="inline-block w-2.5 h-2.5 rounded-full bg-blue-500"
                 ></span>
               ))}
             </div>
             <div className="tooltip-content">
               {dayTasks.map((task) => (
-                <div key={task.id} className="text-sm">
+                <div key={task.id}>
                   {task.text} ({task.priority})
                 </div>
               ))}

@@ -20,6 +20,7 @@
   line-height: 1.5;
   transition: background-color 0.3s;
   position: relative;
+  overflow: visible !important; 
 }
 
 .react-calendar__tile--now {
@@ -88,4 +89,36 @@
   max-width: 200px;
   text-align: left;
   z-index: 1000;
+}
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+/* Tooltip text (hidden by default) */
+.tooltip-content {
+  visibility: hidden;
+  width: max-content;
+  background-color: #333;
+  color: #fff;
+  text-align: left;
+  padding: 6px 10px;
+  border-radius: 4px;
+  position: absolute;
+  z-index: 10;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Show tooltip on hover */
+.tooltip:hover .tooltip-content {
+  visibility: visible;
+  opacity: 1;
 }
