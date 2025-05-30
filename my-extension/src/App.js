@@ -176,7 +176,7 @@ const App = () => {
         <select
           value={filterPriority}
           onChange={(e) => setFilterPriority(e.target.value)}
-          className="px-3 py-1 rounded-md border dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-sm"
+          className="w-full sm:w-auto px-3 py-2 rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         >
           <option value="" disabled hidden>Sort By</option>
           <option value="All">All Priorities</option>
