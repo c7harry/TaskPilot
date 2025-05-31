@@ -249,15 +249,17 @@ const App = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
               className={clsx(
-                "flex items-center justify-between p-3 rounded-md border",
+                "flex flex-col p-3 rounded-md border",
                 "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
               )}
             >
-              <div className="flex flex-col gap-1 max-h-40 overflow-y-auto pr-1">
-                <span className="font-medium whitespace-pre-wrap break-words">
+              <div className="max-h-24 overflow-y-auto pr-1 w-full">
+                <span className="font-medium whitespace-pre-wrap break-words w-full block">
                   {task.text}
                 </span>
-                <div className="flex flex-wrap items-center gap-2 mt-1">
+              </div>
+              <div className="flex flex-wrap items-center gap-2 mt-2 justify-between w-full">
+                <div className="flex flex-wrap items-center gap-2">
                   {task.dueDate && (
                     <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
                       📅 Due: {formatLocalDate(task.dueDate)}
@@ -277,20 +279,21 @@ const App = () => {
                     {priorityIcon[task.priority]} {task.priority}
                   </span>
                 </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => toggleComplete(task.id)}
-                  className="flex items-center justify-center px-2 py-1 rounded-full border border-teal-500 bg-teal-50 text-teal-700 hover:bg-teal-100 hover:scale-110 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400"
-                >
-                  <Check size={14} />
-                </button>
-                <button
-                  onClick={() => deleteTask(task.id)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  <Trash2 size={16} />
-                </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => toggleComplete(task.id)}
+                    className="flex items-center justify-center px-2 py-1 rounded-full border border-teal-500 bg-teal-50 text-teal-700 hover:bg-teal-100 hover:scale-110 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  >
+                    <Check size={14} />
+                  </button>
+                  <button
+                    onClick={() => deleteTask(task.id)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </div>
             </motion.div>
           ))}
