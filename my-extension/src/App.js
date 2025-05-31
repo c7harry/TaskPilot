@@ -146,13 +146,24 @@ const App = () => {
       </div>
 
       <div className="flex flex-col gap-3 mb-6">
-        <input
+        <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && addTask()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              addTask();
+            }
+          }}
           placeholder="Add Task"
-          className="w-full px-4 py-2 rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          rows={1}
+          className="w-full px-4 py-2 resize-none overflow-hidden rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          onInput={(e) => {
+            e.target.style.height = "auto";
+            e.target.style.height = `${e.target.scrollHeight}px`;
+          }}
         />
+
         <div className="flex gap-3 flex-col sm:flex-row">
           <select
             value={priority}
@@ -235,26 +246,30 @@ const App = () => {
                 "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
               )}
             >
-              <div className="flex flex-col">
-                <span className="font-medium">{task.text}</span>
-                {task.dueDate && (
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                   Due: {formatLocalDate(task.dueDate)}
-                  </span>
-                )}
-                <span
-                  className={clsx(
-                    "text-xs mt-1 px-2 py-0.5 rounded-full w-fit font-semibold",
-                    task.priority === "High" &&
-                      "bg-red-100 text-red-700 dark:bg-red-700 dark:text-white",
-                    task.priority === "Medium" &&
-                      "bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-white",
-                    task.priority === "Low" &&
-                      "bg-green-100 text-green-800 dark:bg-green-600 dark:text-white"
-                  )}
-                >
-                  {priorityIcon[task.priority]} {task.priority}
+              <div className="flex flex-col gap-1 max-h-40 overflow-y-auto pr-1">
+                <span className="font-medium whitespace-pre-wrap break-words">
+                  {task.text}
                 </span>
+                <div className="flex flex-wrap items-center gap-2 mt-1">
+                  {task.dueDate && (
+                    <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                      📅 Due: {formatLocalDate(task.dueDate)}
+                    </span>
+                  )}
+                  <span
+                    className={clsx(
+                      "text-xs px-2 py-1 rounded-full font-semibold",
+                      task.priority === "High" &&
+                        "bg-red-100 text-red-700 dark:bg-red-700 dark:text-white",
+                      task.priority === "Medium" &&
+                        "bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-white",
+                      task.priority === "Low" &&
+                        "bg-green-100 text-green-800 dark:bg-green-600 dark:text-white"
+                    )}
+                  >
+                    {priorityIcon[task.priority]} {task.priority}
+                  </span>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <button
