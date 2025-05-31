@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check, PlusCircle,} from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check, PlusCircle,Pencil,Settings,} from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import Calendar from "react-calendar";
@@ -151,7 +151,8 @@ const App = () => {
         ))}
       </div>
 
-      <div className="flex flex-col gap-3 mb-6">
+      <div className="relative flex flex-col gap-3 mb-6">
+        <Pencil className="absolute left-3 top-3 text-gray-400 pointer-events-none" size={16} />
         <textarea
           ref={textareaRef}
           value={input}
@@ -162,32 +163,40 @@ const App = () => {
               addTask();
             }
           }}
-          placeholder="Add Task"
           rows={1}
-          className="w-full px-4 py-2 resize-none overflow-hidden rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full pl-9 pr-4 py-2 resize-none overflow-hidden rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           onInput={(e) => {
             e.target.style.height = "auto";
             e.target.style.height = `${e.target.scrollHeight}px`;
           }}
         />
 
-        <div className="flex gap-3 flex-col sm:flex-row">
+        <div className="flex gap-3 flex-col sm:flex-row relative">
+          <div className="relative w-full">
+          <Settings
+            className="absolute left-3 top-2.5 text-gray-400 pointer-events-none z-10 bg-transparent"
+            size={18}
+          />
           <select
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="w-full pl-10 pr-3 py-2 rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none"
           >
-            <option value="" disabled hidden>Select Priority</option>
+            <option value="" disabled hidden>
+              Priority
+            </option>
             <option value="High">🔴 High</option>
             <option value="Medium">🟡 Medium</option>
             <option value="Low">🟢 Low</option>
           </select>
+        </div>
           <input
             type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
             className="w-full px-3 py-2 rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
+
           <button
             onClick={addTask}
             className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2 text-sm font-semibold rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md hover:scale-105 transition-transform duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
