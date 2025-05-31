@@ -22,6 +22,11 @@ const App = () => {
     localStorage.setItem("darkMode", darkMode);
   }, [darkMode]);
 
+  const formatLocalDate = (dateString) => {
+  const [year, month, day] = dateString.split("-");
+  return `${month}/${day}/${year}`;
+};
+  
   const addTask = () => {
     if (!input.trim()) return;
     const newTask = {
@@ -234,7 +239,7 @@ const App = () => {
                 <span className="font-medium">{task.text}</span>
                 {task.dueDate && (
                   <span className="text-xs text-gray-500 dark:text-gray-400">
-                    Due: {new Date(task.dueDate).toLocaleDateString()}
+                   Due: {formatLocalDate(task.dueDate)}
                   </span>
                 )}
                 <span
