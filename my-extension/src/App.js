@@ -125,10 +125,10 @@ const App = () => {
 
   return (
     <div className="min-h-screen p-4 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white w-[400px] overflow-y-auto">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent text-center w-full">
-          TaskPilot
-        </h1>
+      <div className="flex justify-between items-center mb-4 h-14 w-full">
+        <div className="flex-grow flex justify-center items-center h-full">
+          <img src="/header.png" alt="TaskPilot Logo" className="h-full w-auto object-contain" />
+        </div>
         <button onClick={() => setDarkMode(!darkMode)}>
           {darkMode ? <Sun size={20} /> : <Moon size={20} />}
         </button>

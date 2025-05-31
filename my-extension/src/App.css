@@ -5,6 +5,12 @@ body {
   background-color: #f9fafb;
 }
 
+/* Reset default margin/padding */
+body, html, #root {
+  margin: 0;
+  padding: 0;
+}
+
 .App {
   text-align: center;
 }
