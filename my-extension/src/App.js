@@ -291,7 +291,7 @@ const App = () => {
                     onClick={() => deleteTask(task.id)}
                     className="focus:outline-none focus:ring-2 focus:ring-red-400 rounded-full"
                   >
-                    <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-red-100 text-red-700 dark:bg-red-700 dark:text-white">
+                    <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full border border-red-700 dark:border-red-400 bg-red-100 text-red-700 dark:bg-red-700 dark:text-white">
                       <Trash2 size={16} />
                     </span>
                   </button>
@@ -364,7 +364,7 @@ const App = () => {
                         </button>
                         <button
                           onClick={() => deleteTask(task.id)}
-                          className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-red-100 text-red-700 dark:bg-red-700 dark:text-white hover:scale-105 transition-transform duration-200"
+                          className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full border border-red-700 dark:border-red-400 bg-red-100 text-red-700 dark:bg-red-700 dark:text-white"
                         >
                           <Trash2 size={14} />
                         </button>
