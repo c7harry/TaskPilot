@@ -253,7 +253,7 @@ const App = () => {
                 "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
               )}
             >
-              <div className="max-h-24 overflow-y-auto pr-1 w-full">
+              <div className="max-h-24 overflow-y-auto pr-1 w-full scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent dark:scrollbar-thumb-gray-600 dark:scrollbar-track-transparent">
                 <span className="font-medium whitespace-pre-wrap break-words w-full block">
                   {task.text}
                 </span>
@@ -323,23 +323,53 @@ const App = () => {
                 <motion.div
                   key={task.id}
                   layout
-                  className="flex justify-between items-center p-3 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-500"
+                  className={clsx(
+                    "p-3 rounded-md border",
+                    "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500"
+                  )}
                 >
-                  <span className="line-through">{task.text}</span>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => toggleComplete(task.id)}
-                      className="flex items-center gap-1 px-2 py-0.5 rounded-full border border-teal-500 bg-teal-50 text-teal-700 hover:bg-teal-100 hover:scale-105 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400"
-                    >
-                      <RotateCcw size={14} />
-                      <span className="text-xs font-semibold">Restore</span>
-                    </button>
-                    <button
-                      onClick={() => deleteTask(task.id)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                  <div className="flex flex-col gap-1 w-full max-w-full">
+                    <div className="max-h-24 overflow-y-auto pr-1 w-full scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
+                      <span className="font-medium whitespace-pre-wrap break-words w-full block line-through">
+                        {task.text}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between mt-1 flex-wrap gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {task.dueDate && (
+                          <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                            📅 Due: {formatLocalDate(task.dueDate)}
+                          </span>
+                        )}
+                        <span
+                          className={clsx(
+                            "text-xs px-2 py-1 rounded-full font-semibold",
+                            task.priority === "High" &&
+                              "bg-red-100 text-red-700 dark:bg-red-700 dark:text-white",
+                            task.priority === "Medium" &&
+                              "bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-white",
+                            task.priority === "Low" &&
+                              "bg-green-100 text-green-800 dark:bg-green-600 dark:text-white"
+                          )}
+                        >
+                          {priorityIcon[task.priority]} {task.priority}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => toggleComplete(task.id)}
+                          className="flex items-center gap-1 px-2 py-1 rounded-full border border-teal-500 bg-teal-50 text-teal-700 hover:bg-teal-100 hover:scale-105 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                        >
+                          <RotateCcw size={14} />
+                        </button>
+                        <button
+                          onClick={() => deleteTask(task.id)}
+                          className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-red-100 text-red-700 dark:bg-red-700 dark:text-white hover:scale-105 transition-transform duration-200"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               ))}
