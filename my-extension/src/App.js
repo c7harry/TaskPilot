@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check, PlusCircle,} from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
@@ -16,6 +16,8 @@ const App = () => {
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("darkMode") === "true");
   const [showCalendar, setShowCalendar] = useState(false);
   const [dueDate, setDueDate] = useState("");
+  const textareaRef = useRef(null);
+
   
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
@@ -28,19 +30,23 @@ const App = () => {
 };
   
   const addTask = () => {
-    if (!input.trim()) return;
-    const newTask = {
-      id: Date.now(),
-      text: input.trim(),
-      priority,
-      profile,
-      dueDate,
-      completed: false,
-    };
-    setTasks([newTask, ...tasks]);
-    setInput("");
-    setDueDate("");
+  if (!input.trim()) return;
+  const newTask = {
+    id: Date.now(),
+    text: input.trim(),
+    priority,
+    profile,
+    dueDate,
+    completed: false,
   };
+  setTasks([newTask, ...tasks]);
+  setInput("");
+  setDueDate("");
+  
+  if (textareaRef.current) {
+    textareaRef.current.style.height = "auto";
+  }
+};
 
   const deleteTask = (id) => {
     setTasks(tasks.filter((task) => task.id !== id));
@@ -147,6 +153,7 @@ const App = () => {
 
       <div className="flex flex-col gap-3 mb-6">
         <textarea
+          ref={textareaRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
