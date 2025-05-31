@@ -5,6 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./App.css";
+import { Calendar as CalendarIcon } from "lucide-react"
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { format } from "date-fns";
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
@@ -15,7 +19,7 @@ const App = () => {
   const [showCompleted, setShowCompleted] = useState(false);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("darkMode") === "true");
   const [showCalendar, setShowCalendar] = useState(false);
-  const [dueDate, setDueDate] = useState("");
+  const [dueDate, setDueDate] = useState(null);
   const textareaRef = useRef(null);
 
   
@@ -25,24 +29,27 @@ const App = () => {
   }, [darkMode]);
 
   const formatLocalDate = (dateString) => {
-  const [year, month, day] = dateString.split("-");
-  return `${month}/${day}/${year}`;
+  return dateString;
 };
   
   const addTask = () => {
   if (!input.trim()) return;
+
+  const formattedDueDate = dueDate ? format(dueDate, "MM/dd/yyyy") : null;
+
   const newTask = {
     id: Date.now(),
     text: input.trim(),
     priority,
     profile,
-    dueDate,
+    dueDate: formattedDueDate,
     completed: false,
   };
+
   setTasks([newTask, ...tasks]);
   setInput("");
-  setDueDate("");
-  
+  setDueDate(null);
+
   if (textareaRef.current) {
     textareaRef.current.style.height = "auto";
   }
@@ -190,13 +197,17 @@ const App = () => {
             <option value="Low">🟢 Low</option>
           </select>
         </div>
-          <input
-            type="date"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          />
-
+          <div className="relative w-full">
+            <CalendarIcon className="absolute left-3 top-2.5 text-gray-400 z-10 pointer-events-none" size={18} />
+            <DatePicker
+              selected={dueDate}
+              onChange={(date) => setDueDate(date)}  // Store Date object directly
+              placeholderText="Select date"
+              className="w-full pl-10 pr-3 py-2 rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              calendarClassName="dark:bg-gray-800 dark:text-white"
+              dateFormat="MM/dd/yyyy"  // This only affects display in the picker input
+            />
+          </div>
           <button
             onClick={addTask}
             className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2 text-sm font-semibold rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md hover:scale-105 transition-transform duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
