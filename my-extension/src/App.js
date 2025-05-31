@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check, PlusCircle,Pencil,Settings,Filter} from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check, PlusCircle,Pencil,Settings,Filter, Eye, EyeOff,} from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import Calendar from "react-calendar";
@@ -322,6 +322,7 @@ const App = () => {
           className="flex items-center gap-2 text-sm font-medium text-blue-600"
         >
           {showCompleted ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          {showCompleted ? <EyeOff size={16} /> : <Eye size={16} />}
           {showCompleted ? "Hide" : "Show"} Completed Tasks ({completedTasks.length})
         </button>
 
