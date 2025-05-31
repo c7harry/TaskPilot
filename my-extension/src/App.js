@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check, PlusCircle,Pencil,Settings,} from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check, PlusCircle,Pencil,Settings,Filter} from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import Calendar from "react-calendar";
@@ -205,18 +205,24 @@ const App = () => {
           </button>
         </div>
       </div>
+      <div className="flex justify-between items-center mb-4 gap-4">
+        <div className="relative w-full sm:w-auto">
+          <Filter
+            className="absolute left-3 top-2.5 text-gray-400 pointer-events-none z-10 bg-transparent"
+            size={18}
+          />
+          <select
+            value={filterPriority}
+            onChange={(e) => setFilterPriority(e.target.value)}
+            className="w-full sm:w-auto pl-10 pr-3 py-2 rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none"
+          >
+            <option value="All">All Priorities</option>
+            <option value="High">🔴 High</option>
+            <option value="Medium">🟡 Medium</option>
+            <option value="Low">🟢 Low</option>
+          </select>
+        </div>
 
-      <div className="flex justify-between items-center mb-4">
-        <select
-        value={filterPriority}
-        onChange={(e) => setFilterPriority(e.target.value)}
-        className="w-full sm:w-auto px-3 py-2 rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-      >
-        <option value="All">All Priorities</option>
-        <option value="High">🔴 High</option>
-        <option value="Medium">🟡 Medium</option>
-        <option value="Low">🟢 Low</option>
-      </select>
         <button
           onClick={() => setShowCalendar(!showCalendar)}
           className="flex items-center gap-1 px-4 py-2 text-sm font-semibold bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
@@ -234,9 +240,8 @@ const App = () => {
             </>
           )}
         </button>
-
       </div>
-
+      
       {showCalendar && (
         <div className="mb-4 relative">
           <Calendar
