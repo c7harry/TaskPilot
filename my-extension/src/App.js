@@ -25,6 +25,10 @@ const App = () => {
   const textareaRef = useRef(null);
 
   
+  if (typeof window !== "undefined") {
+  window.React = React;
+  }
+
   useEffect(() => {
   if (typeof chrome !== "undefined" && chrome.storage) {
     chrome.storage.local.get(["tasks", "darkMode"], (result) => {
