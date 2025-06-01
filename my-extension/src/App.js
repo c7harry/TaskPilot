@@ -220,26 +220,26 @@ const App = () => {
               customInput={
                 <div className="relative w-full">
                   <button
-                    type="button"
-                    className={`w-full flex items-center justify-center p-2 rounded-lg shadow-sm border text-sm transition-colors
-                      bg-gradient-to-r from-blue-500 to-indigo-600 border-blue-500 text-white
-                      focus:ring-2 focus:ring-blue-500 focus:outline-none`}
-                  >
-                    {dueDate ? (
-                      <X
-                        size={18}
-                        className="text-white"
-                        aria-label="Clear date"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                          setDueDate(null);
-                        }}
-                      />
-                    ) : (
-                      <CalendarIcon size={18} className="text-white" />
-                    )}
-                  </button>
+                  type="button"
+                  className={`w-full flex items-center justify-center p-2 rounded-lg shadow-sm border text-sm transition-colors
+                    bg-gradient-to-r from-blue-500 to-indigo-600 border-blue-500 text-white
+                    focus:ring-2 focus:ring-blue-500 focus:outline-none`}
+                >
+                  {dueDate ? (
+                    <X
+                      size={18}
+                      className="text-white"
+                      aria-label="Clear date"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        setDueDate(null);
+                      }}
+                    />
+                  ) : (
+                    <CalendarIcon size={18} className="text-white" />
+                  )}
+                </button>
                 </div>
               }
               calendarClassName="custom-datepicker-calendar dark:bg-gray-800 dark:text-white"
