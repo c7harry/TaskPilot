@@ -234,7 +234,7 @@ const App = () => {
                   </button>
                 </div>
               }
-              calendarClassName="dark:bg-gray-800 dark:text-white"
+              calendarClassName="custom-datepicker-calendar dark:bg-gray-800 dark:text-white"
               dateFormat="MM/dd/yyyy"
             />
           </div>
