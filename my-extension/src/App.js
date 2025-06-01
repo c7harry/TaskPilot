@@ -143,7 +143,7 @@ const App = () => {
               className={clsx(
                 "flex items-center space-x-1 px-2 py-1 rounded-full font-medium text-xs text-white bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-200 shadow",
                 profile === prof
-                  ? "ring-2 ring-white ring-offset-0 dark:ring-offset-gray-800"
+                  ? "ring-2 ring-black ring-offset-0 dark:ring-white dark:ring-offset-gray-800"
                   : "opacity-80 hover:opacity-100"
               )}
             >
@@ -169,7 +169,7 @@ const App = () => {
         </div>
       </div>
 
-      <div className="relative flex flex-col gap-3 mb-6">
+      <div className="relative flex flex-col gap-1.5 mb-2">
         <Pencil className="absolute left-3 top-3 text-white-400 pointer-events-none" size={16} />
         <textarea
           ref={textareaRef}
@@ -182,7 +182,11 @@ const App = () => {
             }
           }}
           rows={1}
-          className="w-full pl-9 pr-4 py-2 resize-none overflow-hidden rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full pl-9 pr-4 py-2 resize-none overflow-hidden rounded-lg shadow-sm border text-sm
+            bg-gradient-to-br from-blue-200 to-indigo-300 dark:from-blue-900 dark:to-indigo-900
+            bg-opacity-70 dark:bg-opacity-50
+            border-gray-300 dark:border-gray-700
+            focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-900 dark:text-white"
           onInput={(e) => {
             e.target.style.height = "auto";
             e.target.style.height = `${e.target.scrollHeight}px`;
@@ -218,22 +222,22 @@ const App = () => {
                   <button
                     type="button"
                     className={`w-full flex items-center justify-center p-2 rounded-lg shadow-sm border text-sm transition-colors
-                      ${dueDate ? "bg-gradient-to-r from-blue-500 to-indigo-600 border-blue-500 text-green-100" : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-400"}
+                      bg-gradient-to-r from-blue-500 to-indigo-600 border-blue-500 text-white
                       focus:ring-2 focus:ring-blue-500 focus:outline-none`}
                   >
                     {dueDate ? (
                       <X
                         size={18}
-                        className="text-white-600 dark:text-white-400"
+                        className="text-white"
                         aria-label="Clear date"
                         onClick={(e) => {
-                          e.stopPropagation(); 
-                          e.preventDefault();  
+                          e.stopPropagation();
+                          e.preventDefault();
                           setDueDate(null);
                         }}
                       />
                     ) : (
-                      <CalendarIcon size={18} />
+                      <CalendarIcon size={18} className="text-white" />
                     )}
                   </button>
                 </div>
@@ -250,6 +254,7 @@ const App = () => {
           </button>
         </div>
       </div>
+      <div className="border-t border-black pt-2 mb-4 dark:border-white">
       <div className="flex justify-between items-center mb-4 gap-4">
         <div className="relative inline-block">
           <Filter
@@ -286,6 +291,7 @@ const App = () => {
           )}
         </button>
       </div>
+      </div>
       
       {showCalendar && (
         <div className="mb-4 relative">
@@ -299,7 +305,7 @@ const App = () => {
         </div>
       )}
 
-      <div className="space-y-2">
+      <div className="space-y-2 mb-4">
         <AnimatePresence>
           {filteredTasks.map((task) => (
             <motion.div
@@ -361,7 +367,6 @@ const App = () => {
         </AnimatePresence>
       </div>
 
-      <div className="mt-6 border-t pt-4 dark:border-gray-700">
         <button
           onClick={() => setShowCompleted(!showCompleted)}
           className="flex items-center gap-1 text-sm font-medium text-white px-1.5 py-1.3 rounded bg-gradient-to-r from-blue-500 to-indigo-600 shadow-sm hover:brightness-110 transition"
@@ -437,7 +442,6 @@ const App = () => {
           )}
         </AnimatePresence>
       </div>
-    </div>
   );
 };
 
