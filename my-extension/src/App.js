@@ -186,8 +186,8 @@ const App = () => {
           placeholder="Write a task..."
         />
 
-        <div className="flex gap-3 flex-col sm:flex-row relative">
-          <div className="relative w-full">
+        <div className="flex flex-wrap gap-3 sm:flex-nowrap">
+          <div className="relative flex-1 min-w-[120px]">
           <Settings
             className="absolute left-3 top-2.5 text-gray-400 pointer-events-none z-10 bg-transparent"
             size={18}
@@ -205,7 +205,7 @@ const App = () => {
             <option value="Low">🟢 Low</option>
           </select>
         </div>
-          <div className="relative w-full">
+          <div className="relative flex-1 min-w-[100px]">
             <DatePicker
               selected={dueDate}
               onChange={(date) => setDueDate(date)}
@@ -240,7 +240,7 @@ const App = () => {
           </div>
           <button
             onClick={addTask}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2 text-sm font-semibold rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md hover:scale-105 transition-transform duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="flex-1 sm:flex-none sm:w-auto min-w-[100px] flex items-center justify-center gap-2 px-5 py-2 text-sm font-semibold rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md hover:scale-105 transition-transform duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             <PlusCircle size={18} />
           </button>
