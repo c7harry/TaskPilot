@@ -1,3 +1,5 @@
+/* global chrome */
+
 import React, { useState, useEffect, useRef } from "react";
 import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check, PlusCircle,Pencil,Settings,Filter, Eye, EyeOff, X,Briefcase, User,} from "lucide-react";
 import clsx from "clsx";
@@ -24,9 +26,26 @@ const App = () => {
 
   
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-    localStorage.setItem("darkMode", darkMode);
-  }, [darkMode]);
+  if (typeof chrome !== "undefined" && chrome.storage) {
+    chrome.storage.local.get(["tasks", "darkMode"], (result) => {
+      if (result.tasks) setTasks(result.tasks);
+      if (typeof result.darkMode === "boolean") setDarkMode(result.darkMode);
+    });
+  }
+}, []);
+
+useEffect(() => {
+  document.documentElement.classList.toggle("dark", darkMode);
+  if (typeof chrome !== "undefined" && chrome.storage) {
+    chrome.storage.local.set({ darkMode });
+  }
+}, [darkMode]);
+
+useEffect(() => {
+  if (typeof chrome !== "undefined" && chrome.storage) {
+    chrome.storage.local.set({ tasks });
+  }
+}, [tasks]);
 
   const formatLocalDate = (dateString) => {
   return dateString;
@@ -34,7 +53,6 @@ const App = () => {
   
   const addTask = () => {
   if (!input.trim()) return;
-
   const formattedDueDate = dueDate ? format(dueDate, "MM/dd/yyyy") : null;
 
   const newTask = {
@@ -46,26 +64,26 @@ const App = () => {
     completed: false,
   };
 
-  setTasks([newTask, ...tasks]);
+  const updatedTasks = [newTask, ...tasks];
+  setTasks(updatedTasks);
   setInput("");
   setDueDate(null);
 
-  if (textareaRef.current) {
-    textareaRef.current.style.height = "auto";
-  }
+  if (textareaRef.current) textareaRef.current.style.height = "auto";
 };
 
   const deleteTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
-  };
+  const updatedTasks = tasks.filter((task) => task.id !== id);
+  setTasks(updatedTasks);
+};
+
 
   const toggleComplete = (id) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
-    );
-  };
+  const updatedTasks = tasks.map((task) =>
+    task.id === id ? { ...task, completed: !task.completed } : task
+  );
+  setTasks(updatedTasks);
+};
 
   const filteredTasks = tasks.filter(
     (task) =>
@@ -248,9 +266,9 @@ const App = () => {
           </div>
           <button
             onClick={addTask}
-            className="flex-1 sm:flex-none sm:w-auto min-w-[100px] flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md hover:scale-105 transition-transform duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="flex-1 min-w-[100px] flex items-center justify-center gap-1 py-2 px-3 text-sm font-semibold rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-sm hover:scale-[1.03] transition-transform duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
-            <PlusCircle size={18} />
+            <PlusCircle size={20} />
           </button>
         </div>
       </div>
