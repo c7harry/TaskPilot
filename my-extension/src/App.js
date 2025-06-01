@@ -166,7 +166,7 @@ const App = () => {
       </div>
 
       <div className="relative flex flex-col gap-3 mb-6">
-        <Pencil className="absolute left-3 top-3 text-gray-400 pointer-events-none" size={16} />
+        <Pencil className="absolute left-3 top-3 text-white-400 pointer-events-none" size={16} />
         <textarea
           ref={textareaRef}
           value={input}
@@ -189,13 +189,13 @@ const App = () => {
         <div className="flex flex-wrap gap-3 sm:flex-nowrap">
           <div className="relative flex-1 min-w-[120px]">
           <Settings
-            className="absolute left-3 top-2.5 text-gray-400 pointer-events-none z-10 bg-transparent"
+            className="absolute left-3 top-2.5 text-white-400 pointer-events-none z-10 bg-transparent"
             size={18}
           />
           <select
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
-            className="w-full pl-10 pr-3 py-2 rounded-lg shadow-sm border text-sm text-white border-transparent bg-gradient-to-r from-blue-500 to-indigo-600 focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none"
+            className="w-full pl-8 pr-0 py-2 rounded-lg shadow-sm border text-sm text-white border-transparent bg-gradient-to-r from-blue-500 to-indigo-600 focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none"
           >
             <option value="" disabled hidden>
               Priority
@@ -247,15 +247,15 @@ const App = () => {
         </div>
       </div>
       <div className="flex justify-between items-center mb-4 gap-4">
-        <div className="relative w-full sm:w-auto">
+        <div className="relative inline-block">
           <Filter
-            className="absolute left-3 top-2.5 text-gray-400 pointer-events-none z-10 bg-transparent"
+            className="absolute left-3 top-2.5 text-gray-200 pointer-events-none z-10 bg-transparent"
             size={18}
           />
           <select
             value={filterPriority}
             onChange={(e) => setFilterPriority(e.target.value)}
-            className="w-full sm:w-auto pl-10 pr-3 py-2 rounded-lg shadow-sm border text-sm text-white border-transparent bg-gradient-to-r from-blue-500 to-indigo-600 focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none"
+            className="pl-10 pr-2 py-2 rounded-lg shadow-sm border text-sm text-white border-transparent bg-gradient-to-r from-blue-500 to-indigo-600 focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none w-auto"
           >
             <option value="All">All Priorities</option>
             <option value="High">🔴 High</option>
