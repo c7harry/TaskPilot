@@ -294,12 +294,13 @@ const App = () => {
       </div>
       
       {showCalendar && (
-        <div className="mb-4 relative">
+        <div
+          className="mb-4 relative p-2 rounded-lg border dark:border-gray-700 bg-gradient-to-br from-blue-200 to-indigo-300 dark:from-blue-900 dark:to-indigo-900">
           <Calendar
             tileContent={tileContent}
-            className="w-full rounded-lg border dark:border-gray-700 p-2 bg-white dark:bg-gray-800"
+            className="w-full rounded-lg bg-transparent dark:bg-transparent"
             tileClassName="group"
-            prev2Label={null} 
+            prev2Label={null}
             next2Label={null}
           />
         </div>
