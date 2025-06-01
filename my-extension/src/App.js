@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check, PlusCircle,Pencil,Settings,Filter, Eye, EyeOff, X,} from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check, PlusCircle,Pencil,Settings,Filter, Eye, EyeOff, X,Briefcase, User,} from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import Calendar from "react-calendar";
@@ -132,23 +132,27 @@ const App = () => {
 
   return (
     <div className="min-h-screen p-4 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white w-[400px] overflow-y-auto">
-      <div className="relative flex items-center justify-between h-16 mb-4 w-full">
-        <div className="flex flex-col space-y-1 z-10">
-          {["Work", "Personal"].map((prof) => (
+      <div className="relative flex items-center justify-between h-10 mb-5 w-full">
+      <div className="flex flex-col space-y-2 z-10">
+        {["Work", "Personal"].map((prof) => {
+          const Icon = prof === "Work" ? Briefcase : User;
+          return (
             <button
               key={prof}
               onClick={() => setProfile(prof)}
               className={clsx(
-                "px-3 py-1 rounded-full font-medium text-sm",
+                "flex items-center space-x-1 px-2 py-1 rounded-full font-medium text-xs text-white bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-200 shadow",
                 profile === prof
-                  ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
-                  : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-white"
+                  ? "ring-2 ring-white ring-offset-0 dark:ring-offset-gray-800"
+                  : "opacity-80 hover:opacity-100"
               )}
             >
-              {prof}
+              <Icon className="w-3.5 h-3.5" />
+              <span>{prof}</span>
             </button>
-          ))}
-        </div>
+          );
+        })}
+      </div>
 
         <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
         <img
@@ -189,9 +193,9 @@ const App = () => {
         <div className="flex flex-wrap gap-3 sm:flex-nowrap">
           <div className="relative flex-1 min-w-[120px]">
           <Settings
-            className="absolute left-3 top-2.5 text-white-400 pointer-events-none z-10 bg-transparent"
-            size={18}
-          />
+          className="absolute left-3 top-2.5 text-white pointer-events-none z-10 bg-transparent"
+          size={18}
+        />
           <select
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
