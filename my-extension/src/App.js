@@ -194,7 +194,7 @@ const App = () => {
           placeholder="Write a task..."
         />
 
-        <div className="flex flex-wrap gap-3 sm:flex-nowrap">
+        <div className="flex justify-between gap-3 w-full">
           <div className="relative flex-1 min-w-[120px]">
           <Settings
           className="absolute left-3 top-2.5 text-white pointer-events-none z-10 bg-transparent"
@@ -213,7 +213,7 @@ const App = () => {
             <option value="Low">🟢 Low</option>
           </select>
         </div>
-          <div className="relative flex-1 min-w-[100px]">
+           <div className="relative flex-1 min-w-[100px] flex justify-center items-center">
             <DatePicker
               selected={dueDate}
               onChange={(date) => setDueDate(date)}
@@ -222,7 +222,7 @@ const App = () => {
                   <button
                   type="button"
                   className={`w-full flex items-center justify-center p-2 rounded-lg shadow-sm border text-sm transition-colors
-                    bg-gradient-to-r from-blue-500 to-indigo-600 border-blue-500 text-white
+                    bg-gradient-to-r from-blue-500 to-indigo-600 border-gray-600 text-white
                     focus:ring-2 focus:ring-blue-500 focus:outline-none`}
                 >
                   {dueDate ? (
@@ -248,7 +248,7 @@ const App = () => {
           </div>
           <button
             onClick={addTask}
-            className="flex-1 sm:flex-none sm:w-auto min-w-[100px] flex items-center justify-center gap-2 px-5 py-2 text-sm font-semibold rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md hover:scale-105 transition-transform duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="flex-1 sm:flex-none sm:w-auto min-w-[100px] flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md hover:scale-105 transition-transform duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             <PlusCircle size={18} />
           </button>
