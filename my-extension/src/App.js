@@ -214,13 +214,13 @@ const App = () => {
                   <button
                     type="button"
                     className={`w-full flex items-center justify-center p-2 rounded-lg shadow-sm border text-sm transition-colors
-                      ${dueDate ? "bg-green-100 border-green-400 text-green-600" : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-400"}
+                      ${dueDate ? "bg-gradient-to-r from-blue-500 to-indigo-600 border-blue-500 text-green-100" : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-400"}
                       focus:ring-2 focus:ring-blue-500 focus:outline-none`}
                   >
                     {dueDate ? (
                       <X
                         size={18}
-                        className="text-red-600 dark:text-red-400"
+                        className="text-white-600 dark:text-white-400"
                         aria-label="Clear date"
                         onClick={(e) => {
                           e.stopPropagation(); 
