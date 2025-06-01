@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check, PlusCircle,Pencil,Settings,Filter, Eye, EyeOff,} from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check, PlusCircle,Pencil,Settings,Filter, Eye, EyeOff, X,} from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import Calendar from "react-calendar";
@@ -132,30 +132,37 @@ const App = () => {
 
   return (
     <div className="min-h-screen p-4 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white w-[400px] overflow-y-auto">
-      <div className="flex justify-between items-center mb-4 h-14 w-full">
-        <div className="flex-grow flex justify-center items-center h-full">
-          <img src="/header.png" alt="TaskPilot Logo" className="h-full w-auto object-contain" />
+      <div className="relative flex items-center justify-between h-16 mb-4 w-full">
+        <div className="flex flex-col space-y-1 z-10">
+          {["Work", "Personal"].map((prof) => (
+            <button
+              key={prof}
+              onClick={() => setProfile(prof)}
+              className={clsx(
+                "px-3 py-1 rounded-full font-medium text-sm",
+                profile === prof
+                  ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
+                  : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-white"
+              )}
+            >
+              {prof}
+            </button>
+          ))}
         </div>
-        <button onClick={() => setDarkMode(!darkMode)}>
-          {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-        </button>
+
+        <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        <img
+          src="/header.png"
+          alt="TaskPilot Logo"
+          className="h-14 w-auto object-contain"
+        />
       </div>
 
-      <div className="flex justify-center space-x-4 mb-4">
-        {["Work", "Personal"].map((prof) => (
-          <button
-            key={prof}
-            onClick={() => setProfile(prof)}
-            className={clsx(
-              "px-4 py-1 rounded-full font-medium",
-              profile === prof
-                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
-                : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-white"
-            )}
-          >
-            {prof}
+        <div className="z-10 mr-10">
+          <button onClick={() => setDarkMode(!darkMode)}>
+            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
-        ))}
+        </div>
       </div>
 
       <div className="relative flex flex-col gap-3 mb-6">
@@ -176,6 +183,7 @@ const App = () => {
             e.target.style.height = "auto";
             e.target.style.height = `${e.target.scrollHeight}px`;
           }}
+          placeholder="Write a task..."
         />
 
         <div className="flex gap-3 flex-col sm:flex-row relative">
@@ -198,14 +206,36 @@ const App = () => {
           </select>
         </div>
           <div className="relative w-full">
-            <CalendarIcon className="absolute left-3 top-2.5 text-gray-400 z-10 pointer-events-none" size={18} />
             <DatePicker
               selected={dueDate}
-              onChange={(date) => setDueDate(date)}  // Store Date object directly
-              placeholderText="Select date"
-              className="w-full pl-10 pr-3 py-2 rounded-lg shadow-sm border text-sm dark:bg-gray-800 bg-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              onChange={(date) => setDueDate(date)}
+              customInput={
+                <div className="relative w-full">
+                  <button
+                    type="button"
+                    className={`w-full flex items-center justify-center p-2 rounded-lg shadow-sm border text-sm transition-colors
+                      ${dueDate ? "bg-green-100 border-green-400 text-green-600" : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-400"}
+                      focus:ring-2 focus:ring-blue-500 focus:outline-none`}
+                  >
+                    {dueDate ? (
+                      <X
+                        size={18}
+                        className="text-red-600 dark:text-red-400"
+                        aria-label="Clear date"
+                        onClick={(e) => {
+                          e.stopPropagation(); 
+                          e.preventDefault();  
+                          setDueDate(null);
+                        }}
+                      />
+                    ) : (
+                      <CalendarIcon size={18} />
+                    )}
+                  </button>
+                </div>
+              }
               calendarClassName="dark:bg-gray-800 dark:text-white"
-              dateFormat="MM/dd/yyyy"  // This only affects display in the picker input
+              dateFormat="MM/dd/yyyy"
             />
           </div>
           <button
