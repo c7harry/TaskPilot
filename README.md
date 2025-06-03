@@ -97,10 +97,9 @@ TaskPilot is a modern, interactive **To-Do List Chrome Extension** built with Re
 ## ✨ Future Ideas
 
 - Task search bar
-- Color tags/labels
 - Task pinning
 - Undo delete
-- Notifications for due soon/overdue tasks
+- Notifications for overdue tasks
 
 ---
 
