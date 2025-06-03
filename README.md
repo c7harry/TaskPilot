@@ -1,70 +1,107 @@
-# Getting Started with Create React App
+# TaskPilot Chrome Extension
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+TaskPilot is a modern, interactive **To-Do List Chrome Extension** built with React and Tailwind CSS. It helps you organize your tasks, manage priorities, and stay productive with a beautiful and intuitive interface.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🚀 Features
 
-### `npm start`
+### 📝 Add & Edit Tasks
+- Quickly add new tasks with a description, priority, and due date.
+- Edit any task inline, including its text, priority, and due date.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 🗂️ Profiles
+- Switch between **Work** and **Personal** profiles to keep your tasks organized.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 🔴 Priority Levels
+- Assign **High**, **Medium**, or **Low** priority to each task.
+- Priority is color-coded for quick visual scanning.
 
-### `npm test`
+### 📅 Due Dates & Calendar
+- Assign a due date to any task.
+- View all tasks on a monthly calendar with color-coded dots and tooltips.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 🔍 Filtering & Search
+- Filter tasks by priority.
+- (Optional: Add a search bar for real-time text filtering.)
 
-### `npm run build`
+### ✅ Complete & Restore Tasks
+- Mark tasks as complete with a single click.
+- View, hide, or restore completed tasks.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 🌗 Dark Mode
+- Toggle between light and dark themes for comfortable viewing at any time.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 📌 Due Soon Highlight
+- Tasks due today or tomorrow are highlighted with a red border and an animated "Due Soon" badge.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 🗑️ Delete Tasks
+- Remove tasks instantly.
+- (Optional: Add an "Undo" feature for accidental deletes.)
 
-### `npm run eject`
+### 🎨 Beautiful Animations
+- Smooth transitions and animated badges using Framer Motion.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 💾 Persistent Storage
+- All tasks and settings are saved automatically using Chrome's local storage.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 🛠️ How It Works
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- **Add a Task:**  
+  Enter your task, select a priority and due date, and click the "+" button.
 
-## Learn More
+- **Edit a Task:**  
+  Click on any task (or its priority/due date) to edit. Change the text, priority, or due date, then save or cancel.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- **Complete a Task:**  
+  Click the checkmark to mark as complete. Completed tasks can be shown/hidden and restored.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- **Switch Profiles:**  
+  Use the Work/Personal buttons to toggle between task lists.
 
-### Code Splitting
+- **Calendar View:**  
+  Click "Calendar" to see all tasks for the month, with tooltips showing task details on each day.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- **Dark Mode:**  
+  Use the sun/moon button to toggle dark mode.
 
-### Analyzing the Bundle Size
+- **Due Soon:**  
+  Tasks due today or tomorrow are visually highlighted for urgency.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+---
 
-### Making a Progressive Web App
+## 🧑‍💻 Tech Stack
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- **React** (with hooks)
+- **Tailwind CSS** (utility-first styling)
+- **Framer Motion** (animations)
+- **date-fns** (date utilities)
+- **Chrome Storage API** (persistent data)
+- **Lucide Icons** (modern icon set)
 
-### Advanced Configuration
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 📦 Installation & Usage
 
-### Deployment
+1. Clone or download this repository.
+2. Run `npm install` to install dependencies.
+3. Run `npm start` to launch locally for development.
+4. For Chrome Extension:
+   - Run `npm run build`
+   - Load the `build` folder as an unpacked extension in Chrome.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+## ✨ Future Ideas
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Task search bar
+- Color tags/labels
+- Task pinning
+- Undo delete
+- Notifications for due soon/overdue tasks
+
+---
+
+Enjoy using **TaskPilot** to stay organized and productive!
