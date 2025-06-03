@@ -1,33 +1,31 @@
-/* App.css */
+/* =========================
+   Base & Reset Styles
+   ========================= */
+body, html, #root {
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: 'Inter', sans-serif;
   font-weight: 400;
   background-color: #f9fafb;
 }
 
-input::placeholder {
-  color: black !important; 
-}
-
-.dark input::placeholder {
-  color: white !important;
-}
-
-/* Reset default margin/padding */
-body, html, #root {
-  margin: 0;
-  padding: 0;
-}
-
-.App {
-  text-align: center;
-}
-
-/* General spacing */
 * {
   box-sizing: border-box;
 }
 
+/* =========================
+   App Container
+   ========================= */
+.App {
+  text-align: center;
+}
+
+/* =========================
+   Input & Select Styles
+   ========================= */
 input, select, button {
   outline: none;
   transition: all 0.2s ease;
@@ -46,7 +44,39 @@ button:hover {
   cursor: pointer;
 }
 
-/* Calendar modern styles */
+input, select {
+  font-size: 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #4b5563;
+}
+
+.dark input, .dark select {
+  background-color: #374151;
+  color: #f9fafb;
+  border-color: #4b5563;
+}
+
+/* =========================
+   Button Styles
+   ========================= */
+button {
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+/* =========================
+   Calendar Styles
+   ========================= */
 .react-calendar {
   background-color: #ffffff;
   color: #000000;
@@ -75,6 +105,7 @@ button:hover {
   transform: scale(1.05);
   cursor: default;
 }
+
 .react-calendar__tile--now {
   background: #dbeafe;
   border-radius: 8px;
@@ -93,6 +124,24 @@ button:hover {
   border-radius: 8px;
 }
 
+/* Remove underline from weekday headers */
+.react-calendar__month-view__weekdays__weekday abbr {
+  text-decoration: none;
+  font-weight: 600;
+  color: #64748b;
+}
+
+/* Calendar Navigation */
+.react-calendar__navigation button:hover,
+.react-calendar__navigation button:focus {
+  background-color: #3b82f6 !important;
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
+/* =========================
+   Calendar - Dark Mode
+   ========================= */
 .dark .react-calendar {
   background-color: #1f2937;
   color: #f9fafb;
@@ -118,20 +167,6 @@ button:hover {
   background: #1e40af;
 }
 
-/* Remove underline from weekday headers */
-.react-calendar__month-view__weekdays__weekday abbr {
-  text-decoration: none;
-  font-weight: 600;
-  color: #64748b;
-}
-
-.react-calendar__navigation button:hover,
-.react-calendar__navigation button:focus {
-  background-color: #3b82f6 !important;
-  cursor: pointer;
-  transform: scale(1.1);
-}
-
 .dark .react-calendar__navigation button:hover,
 .dark .react-calendar__navigation button:focus {
   background-color: #2563eb;
@@ -144,7 +179,9 @@ button:hover {
   color: #94a3b8;
 }
 
-/* Tooltip modern */
+/* =========================
+   Tooltip Styles
+   ========================= */
 .tooltip {
   position: relative;
   display: flex;
@@ -210,44 +247,9 @@ button:hover {
   color: #22c55e;
 }
 
-/* Task item modern tweaks */
-button {
-  border-radius: 8px;
-  font-weight: 500;
-}
-
-button:hover {
-  transform: scale(1.05);
-}
-
-button:active {
-  transform: scale(0.95);
-}
-
-/* Input + Select modern */
-input, select {
-  font-size: 14px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  background-color: #fff;
-}
-
-.dark input, .dark select {
-  background-color: #374151;
-  color: #f9fafb;
-  border-color: #4b5563;
-}
-
-input::placeholder {
-  color: #9ca3af;
-}
-
-.dark input::placeholder {
-  color: #9ca3af;
-}
-
-/* Task cards */
+/* =========================
+   Task Card Styles
+   ========================= */
 .motion-div {
   box-shadow: 0 1px 4px rgba(0,0,0,0.1);
   transition: box-shadow 0.3s ease;
@@ -265,6 +267,9 @@ input::placeholder {
   box-shadow: 0 4px 12px rgba(255,255,255,0.1);
 }
 
+/* =========================
+   Date Picker Styles
+   ========================= */
 input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 0;
   display: none;
