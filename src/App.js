@@ -27,6 +27,8 @@ const App = () => {
   const [dueDate, setDueDate] = useState(null);
   const [editingTaskId, setEditingTaskId] = useState(null);
   const [editingText, setEditingText] = useState("");
+  const [editingPriority, setEditingPriority] = useState("");
+  const [editingDueDate, setEditingDueDate] = useState(null);
   const textareaRef = useRef(null);
 
   // Expose React globally for Chrome extension compatibility
@@ -104,10 +106,19 @@ const App = () => {
   // Save edited task
   const saveEdit = (id) => {
     setTasks(tasks.map(task =>
-      task.id === id ? { ...task, text: editingText.trim() || task.text } : task
+      task.id === id
+        ? {
+            ...task,
+            text: editingText.trim() || task.text,
+            priority: editingPriority,
+            dueDate: editingDueDate ? format(editingDueDate, "MM/dd/yyyy") : null,
+          }
+        : task
     ));
     setEditingTaskId(null);
     setEditingText("");
+    setEditingPriority("");
+    setEditingDueDate(null);
   };
 
   // Filter tasks for current profile and priority (not completed)
@@ -392,6 +403,8 @@ const App = () => {
                 onClick={() => {
                   setEditingTaskId(task.id);
                   setEditingText(task.text);
+                  setEditingPriority(task.priority);
+                  setEditingDueDate(task.dueDate ? new Date(task.dueDate) : null);
                 }}
                 style={{ cursor: "pointer" }}
               >
@@ -402,6 +415,7 @@ const App = () => {
                       "bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400", 
                       "dark:from-blue-700 dark:via-indigo-800 dark:to-purple-900"
                     )}
+                    onClick={e => e.stopPropagation()}
                   >
                     <textarea
                       autoFocus
@@ -413,7 +427,6 @@ const App = () => {
                           e.target.style.height = `${e.target.scrollHeight}px`;
                         }
                       }}
-                      onBlur={() => saveEdit(task.id)}
                       onKeyDown={e => {
                         if (e.key === "Enter" && !e.shiftKey) {
                           e.preventDefault();
@@ -428,6 +441,74 @@ const App = () => {
                       rows={4}
                       style={{ minHeight: "6rem" }}
                     />
+                    {/* Priority and Due Date Editors */}
+                    <div className="flex gap-2 mt-2">
+                      {/* Priority Editor */}
+                      <select
+                        value={editingPriority}
+                        onChange={e => setEditingPriority(e.target.value)}
+                        className="pl-2 pr-2 py-1 rounded-lg shadow-sm border text-xs text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 bg-gradient-to-r from-blue-100 to-indigo-200 dark:from-blue-900 dark:to-indigo-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      >
+                        <option value="High">🔴 High</option>
+                        <option value="Medium">🟡 Medium</option>
+                        <option value="Low">🟢 Low</option>
+                      </select>
+                      {/* Due Date Editor */}
+                      <DatePicker
+                        selected={editingDueDate}
+                        onChange={date => setEditingDueDate(date)}
+                        customInput={
+                          <div className="relative w-full">
+                            <button
+                              type="button"
+                              className="flex items-center px-2 py-1 rounded-lg border text-xs bg-gradient-to-r from-blue-100 to-indigo-200 dark:from-blue-900 dark:to-indigo-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white"
+                            >
+                              {editingDueDate ? (
+                                <X
+                                  size={14}
+                                  className="text-gray-900 dark:text-white"
+                                  aria-label="Clear date"
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    setEditingDueDate(null);
+                                  }}
+                                />
+                              ) : (
+                                <CalendarIcon size={14} className="text-gray-900 dark:text-white" />
+                              )}
+                              <span className="ml-1">
+                                {editingDueDate ? format(editingDueDate, "MM/dd/yyyy") : "Due Date"}
+                              </span>
+                            </button>
+                          </div>
+                        }
+                        calendarClassName="custom-datepicker-calendar dark:bg-gray-800 dark:text-white"
+                        dateFormat="MM/dd/yyyy"
+                        popperPlacement="bottom"
+                      />
+                      {/* Save Button */}
+                      <button
+                        onClick={() => saveEdit(task.id)}
+                        className="ml-2 px-2 py-1 rounded bg-blue-500 text-white text-xs font-semibold hover:bg-blue-600 transition"
+                        tabIndex={0}
+                        type="button"
+                      >
+                        Save
+                      </button>
+                      {/* Cancel Button */}
+                      <button
+                        onClick={() => {
+                          setEditingTaskId(null);
+                          setEditingText("");
+                        }}
+                        className="px-2 py-1 rounded bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-white text-xs font-semibold hover:bg-gray-400 dark:hover:bg-gray-600 transition"
+                        tabIndex={0}
+                        type="button"
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <span className="font-medium whitespace-pre-wrap break-words w-full block">
