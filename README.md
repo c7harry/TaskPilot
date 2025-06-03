@@ -23,7 +23,6 @@ TaskPilot is a modern, interactive **To-Do List Chrome Extension** built with Re
 
 ### 🔍 Filtering & Search
 - Filter tasks by priority.
-- (Optional: Add a search bar for real-time text filtering.)
 
 ### ✅ Complete & Restore Tasks
 - Mark tasks as complete with a single click.
@@ -37,7 +36,7 @@ TaskPilot is a modern, interactive **To-Do List Chrome Extension** built with Re
 
 ### 🗑️ Delete Tasks
 - Remove tasks instantly.
-- (Optional: Add an "Undo" feature for accidental deletes.)
+- Undo feature for accidental deletes.
 
 ### 🎨 Beautiful Animations
 - Smooth transitions and animated badges using Framer Motion.
