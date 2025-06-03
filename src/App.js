@@ -11,7 +11,7 @@ import "./App.css";
 import { Calendar as CalendarIcon } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { format } from "date-fns";
+import { format, isToday, isTomorrow, parse } from "date-fns";
 
 // Main App component
 const App = () => {
@@ -186,6 +186,13 @@ const App = () => {
       }
     }
     return null;
+  };
+
+  // Helper to check if a task is due soon (today or tomorrow)
+  const isDueSoon = (dueDate) => {
+    if (!dueDate) return false;
+    const parsed = typeof dueDate === "string" ? parse(dueDate, "MM/dd/yyyy", new Date()) : dueDate;
+    return isToday(parsed) || isTomorrow(parsed);
   };
 
   // Main render
@@ -382,186 +389,203 @@ const App = () => {
       {/* Active tasks list */}
       <div className="space-y-2 mb-4">
         <AnimatePresence>
-          {filteredTasks.map((task) => (
-            <motion.div
-              key={task.id}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              className={clsx(
-                "flex flex-col p-3 rounded-md border",
-                "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-              )}
-              // Make the whole card clickable for editing
-              onClick={() => {
-                setEditingTaskId(task.id);
-                setEditingText(task.text);
-                setEditingPriority(task.priority);
-                setEditingDueDate(task.dueDate ? new Date(task.dueDate) : null);
-              }}
-              style={{ cursor: editingTaskId === task.id ? "default" : "pointer" }}
-            >
-              {/* Task text */}
-              <div
-                className={
-                  editingTaskId === task.id
-                    ? "pr-1 w-full"
-                    : "max-h-24 overflow-y-auto pr-1 w-full scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent dark:scrollbar-thumb-gray-600 dark:scrollbar-track-transparent"
-                }
-              >
-                {editingTaskId === task.id ? (
-                  <div
-                    className={clsx(
-                      "p-[2px] rounded",
-                      "bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400", 
-                      "dark:from-blue-700 dark:via-indigo-800 dark:to-purple-900"
-                    )}
-                    onClick={e => e.stopPropagation()}
-                  >
-                    <textarea
-                      autoFocus
-                      value={editingText}
-                      onChange={e => {
-                        setEditingText(e.target.value);
-                        if (e.target) {
-                          e.target.style.height = "auto";
-                          e.target.style.height = `${e.target.scrollHeight}px`;
-                        }
-                      }}
-                      onKeyDown={e => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                          e.preventDefault();
-                          saveEdit(task.id);
-                        }
-                        if (e.key === "Escape") {
-                          setEditingTaskId(null);
-                          setEditingText("");
-                        }
-                      }}
-                      className="w-full rounded px-2 py-1 border-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent dark:scrollbar-thumb-gray-600 dark:scrollbar-track-transparent resize-none overflow-auto focus:outline-none"
-                      rows={4}
-                      style={{ minHeight: "6rem" }}
-                    />
-                    {/* Priority and Due Date Editors */}
-                    <div className="flex gap-2 mt-0">
-                      {/* Priority Editor */}
-                      <select
-                        value={editingPriority}
-                        onChange={e => setEditingPriority(e.target.value)}
-                        className="pl-2 pr-2 py-1 rounded-lg shadow-sm border text-xs text-white border-gray-300 dark:border-gray-700 bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-900 dark:to-indigo-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      >
-                        <option value="High">🔴 High</option>
-                        <option value="Medium">🟡 Medium</option>
-                        <option value="Low">🟢 Low</option>
-                      </select>
-                      {/* Due Date Editor */}
-                      <DatePicker
-                        selected={editingDueDate}
-                        onChange={date => setEditingDueDate(date)}
-                        customInput={
-                          <div className="relative w-full">
-                            <button
-                              type="button"
-                              className="flex items-center px-2 py-1 rounded-lg border text-xs bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-900 dark:to-indigo-900 border-gray-300 dark:border-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                            >
-                              {editingDueDate ? (
-                                <X
-                                  size={14}
-                                  className="text-white"
-                                  aria-label="Clear date"
-                                  onClick={e => {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                    setEditingDueDate(null);
-                                  }}
-                                />
-                              ) : (
-                                <CalendarIcon size={14} className="text-white" />
-                              )}
-                              <span className="ml-1">
-                                {editingDueDate ? format(editingDueDate, "MM/dd/yyyy") : "Due Date"}
-                              </span>
-                            </button>
-                          </div>
-                        }
-                        calendarClassName="custom-datepicker-calendar dark:bg-gray-800 dark:text-white"
-                        dateFormat="MM/dd/yyyy"
-                        popperPlacement="bottom"
-                      />
-                      {/* Save Button */}
-                      <button
-                        onClick={e => {
-                          e.stopPropagation();
-                          saveEdit(task.id);
-                        }}
-                        className="ml-2 px-2 py-1 rounded bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-900 dark:to-indigo-900 text-white text-xs font-semibold hover:brightness-110 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        tabIndex={0}
-                        type="button"
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={e => {
-                          e.stopPropagation();
-                          setEditingTaskId(null);
-                          setEditingText("");
-                        }}
-                        className="px-2 py-1 rounded bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-900 dark:to-indigo-900 text-white text-xs font-semibold hover:brightness-110 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        tabIndex={0}
-                        type="button"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <span className="font-medium whitespace-pre-wrap break-words w-full block">
-                    {task.text}
-                  </span>
+          {filteredTasks.map((task) => {
+            const dueSoon = isDueSoon(task.dueDate);
+            return (
+              <motion.div
+                key={task.id}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className={clsx(
+                  "flex flex-col p-3 rounded-md border relative transition-all duration-300",
+                  "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700",
+                  dueSoon && "border-2 border-red-500 dark:border-red-400 shadow-lg"
                 )}
-              </div>
-              {/* Task meta: due date, priority, actions */}
-              <div className="flex flex-wrap items-center gap-2 mt-2 justify-between w-full">
-                <div className="flex flex-wrap items-center gap-2">
-                  {task.dueDate && (
-                    <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                      📅 Due: {formatLocalDate(task.dueDate)}
+                onClick={() => {
+                  setEditingTaskId(task.id);
+                  setEditingText(task.text);
+                  setEditingPriority(task.priority);
+                  setEditingDueDate(task.dueDate ? new Date(task.dueDate) : null);
+                }}
+                style={{ cursor: editingTaskId === task.id ? "default" : "pointer" }}
+              >
+                {/* Due Soon Animated Badge */}
+                {dueSoon && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.9 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.9 }}
+                    transition={{ duration: 0.4, type: "spring", bounce: 0.4 }}
+                    className="absolute top-2 right-3 z-10"
+                  >
+                    <span className="px-2 py-1 text-xs font-bold rounded-full bg-red-500 text-white shadow animate-pulse select-none">
+                      Due Soon
+                    </span>
+                  </motion.div>
+                )}
+                {/* Task text and edit controls */}
+                <div
+                  className={
+                    editingTaskId === task.id
+                      ? "pr-1 w-full"
+                      : "max-h-24 overflow-y-auto pr-1 w-full scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent dark:scrollbar-thumb-gray-600 dark:scrollbar-track-transparent"
+                  }
+                >
+                  {editingTaskId === task.id ? (
+                    <div
+                      className={clsx(
+                        "p-[2px] rounded",
+                        "bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400", 
+                        "dark:from-blue-700 dark:via-indigo-800 dark:to-purple-900"
+                      )}
+                      onClick={e => e.stopPropagation()}
+                    >
+                      <textarea
+                        autoFocus
+                        value={editingText}
+                        onChange={e => {
+                          setEditingText(e.target.value);
+                          if (e.target) {
+                            e.target.style.height = "auto";
+                            e.target.style.height = `${e.target.scrollHeight}px`;
+                          }
+                        }}
+                        onKeyDown={e => {
+                          if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            saveEdit(task.id);
+                          }
+                          if (e.key === "Escape") {
+                            setEditingTaskId(null);
+                            setEditingText("");
+                          }
+                        }}
+                        className="w-full rounded px-2 py-1 border-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent dark:scrollbar-thumb-gray-600 dark:scrollbar-track-transparent resize-none overflow-auto focus:outline-none"
+                        rows={4}
+                        style={{ minHeight: "6rem" }}
+                      />
+                      {/* Priority and Due Date Editors */}
+                      <div className="flex gap-2 mt-0">
+                        {/* Priority Editor */}
+                        <select
+                          value={editingPriority}
+                          onChange={e => setEditingPriority(e.target.value)}
+                          className="pl-2 pr-2 py-1 rounded-lg shadow-sm border text-xs text-white border-gray-300 dark:border-gray-700 bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-900 dark:to-indigo-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        >
+                          <option value="High">🔴 High</option>
+                          <option value="Medium">🟡 Medium</option>
+                          <option value="Low">🟢 Low</option>
+                        </select>
+                        {/* Due Date Editor */}
+                        <DatePicker
+                          selected={editingDueDate}
+                          onChange={date => setEditingDueDate(date)}
+                          customInput={
+                            <div className="relative w-full">
+                              <button
+                                type="button"
+                                className="flex items-center px-2 py-1 rounded-lg border text-xs bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-900 dark:to-indigo-900 border-gray-300 dark:border-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                              >
+                                {editingDueDate ? (
+                                  <X
+                                    size={14}
+                                    className="text-white"
+                                    aria-label="Clear date"
+                                    onClick={e => {
+                                      e.stopPropagation();
+                                      e.preventDefault();
+                                      setEditingDueDate(null);
+                                    }}
+                                  />
+                                ) : (
+                                  <CalendarIcon size={14} className="text-white" />
+                                )}
+                                <span className="ml-1">
+                                  {editingDueDate ? format(editingDueDate, "MM/dd/yyyy") : "Due Date"}
+                                </span>
+                              </button>
+                            </div>
+                          }
+                          calendarClassName="custom-datepicker-calendar dark:bg-gray-800 dark:text-white"
+                          dateFormat="MM/dd/yyyy"
+                          popperPlacement="bottom"
+                        />
+                        {/* Save Button */}
+                        <button
+                          onClick={e => {
+                            e.stopPropagation();
+                            saveEdit(task.id);
+                          }}
+                          className="ml-2 px-2 py-1 rounded bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-900 dark:to-indigo-900 text-white text-xs font-semibold hover:brightness-110 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          tabIndex={0}
+                          type="button"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={e => {
+                            e.stopPropagation();
+                            setEditingTaskId(null);
+                            setEditingText("");
+                          }}
+                          className="px-2 py-1 rounded bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-900 dark:to-indigo-900 text-white text-xs font-semibold hover:brightness-110 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          tabIndex={0}
+                          type="button"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="font-medium whitespace-pre-wrap break-words w-full block">
+                      {task.text}
                     </span>
                   )}
-                  <span
-                    className={clsx(
-                      "text-xs px-2 py-1 rounded-full font-semibold",
-                      task.priority === "High" &&
-                        "bg-red-100 text-red-700 dark:bg-red-700 dark:text-white",
-                      task.priority === "Medium" &&
-                        "bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-white",
-                      task.priority === "Low" &&
-                        "bg-green-100 text-green-800 dark:bg-green-600 dark:text-white"
+                </div>
+                {/* Task meta: due date, priority, actions */}
+                <div className="flex flex-wrap items-center gap-2 mt-2 justify-between w-full">
+                  <div className="flex flex-wrap items-center gap-2">
+                    {task.dueDate && (
+                      <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                        📅 Due: {formatLocalDate(task.dueDate)}
+                      </span>
                     )}
-                  >
-                    {priorityIcon[task.priority]} {task.priority}
-                  </span>
-                </div>
-                {/* Complete and delete buttons */}
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => toggleComplete(task.id)}
-                    className="flex items-center justify-center px-2 py-1 rounded-full border border-teal-500 bg-teal-50 text-teal-700 hover:bg-teal-100 hover:scale-110 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400"
-                  >
-                    <Check size={14} />
-                  </button>
-                  <button
-                    onClick={() => deleteTask(task.id)}
-                    className="focus:outline-none focus:ring-2 focus:ring-red-400 rounded-full"
-                  >
-                    <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full border border-red-700 dark:border-red-400 bg-red-100 text-red-700 dark:bg-red-700 dark:text-white">
-                      <Trash2 size={16} />
+                    <span
+                      className={clsx(
+                        "text-xs px-2 py-1 rounded-full font-semibold",
+                        task.priority === "High" &&
+                          "bg-red-100 text-red-700 dark:bg-red-700 dark:text-white",
+                        task.priority === "Medium" &&
+                          "bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-white",
+                        task.priority === "Low" &&
+                          "bg-green-100 text-green-800 dark:bg-green-600 dark:text-white"
+                      )}
+                    >
+                      {priorityIcon[task.priority]} {task.priority}
                     </span>
-                  </button>
+                  </div>
+                  {/* Complete and delete buttons */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => toggleComplete(task.id)}
+                      className="flex items-center justify-center px-2 py-1 rounded-full border border-teal-500 bg-teal-50 text-teal-700 hover:bg-teal-100 hover:scale-110 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                    >
+                      <Check size={14} />
+                    </button>
+                    <button
+                      onClick={() => deleteTask(task.id)}
+                      className="focus:outline-none focus:ring-2 focus:ring-red-400 rounded-full"
+                    >
+                      <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full border border-red-700 dark:border-red-400 bg-red-100 text-red-700 dark:bg-red-700 dark:text-white">
+                        <Trash2 size={16} />
+                      </span>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </AnimatePresence>
       </div>
 
