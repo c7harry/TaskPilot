@@ -25,6 +25,8 @@ const App = () => {
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("darkMode") === "true");
   const [showCalendar, setShowCalendar] = useState(false);
   const [dueDate, setDueDate] = useState(null);
+  const [editingTaskId, setEditingTaskId] = useState(null);
+  const [editingText, setEditingText] = useState("");
   const textareaRef = useRef(null);
 
   // Expose React globally for Chrome extension compatibility
@@ -97,6 +99,15 @@ const App = () => {
       task.id === id ? { ...task, completed: !task.completed } : task
     );
     setTasks(updatedTasks);
+  };
+
+  // Save edited task
+  const saveEdit = (id) => {
+    setTasks(tasks.map(task =>
+      task.id === id ? { ...task, text: editingText.trim() || task.text } : task
+    ));
+    setEditingTaskId(null);
+    setEditingText("");
   };
 
   // Filter tasks for current profile and priority (not completed)
@@ -372,10 +383,57 @@ const App = () => {
               )}
             >
               {/* Task text */}
-              <div className="max-h-24 overflow-y-auto pr-1 w-full scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent dark:scrollbar-thumb-gray-600 dark:scrollbar-track-transparent">
-                <span className="font-medium whitespace-pre-wrap break-words w-full block">
-                  {task.text}
-                </span>
+              <div
+                className={
+                  editingTaskId === task.id
+                    ? "pr-1 w-full"
+                    : "max-h-24 overflow-y-auto pr-1 w-full scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent dark:scrollbar-thumb-gray-600 dark:scrollbar-track-transparent"
+                }
+                onClick={() => {
+                  setEditingTaskId(task.id);
+                  setEditingText(task.text);
+                }}
+                style={{ cursor: "pointer" }}
+              >
+                {editingTaskId === task.id ? (
+                  <div
+                    className={clsx(
+                      "p-[2px] rounded",
+                      "bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400", 
+                      "dark:from-blue-700 dark:via-indigo-800 dark:to-purple-900"
+                    )}
+                  >
+                    <textarea
+                      autoFocus
+                      value={editingText}
+                      onChange={e => {
+                        setEditingText(e.target.value);
+                        if (e.target) {
+                          e.target.style.height = "auto";
+                          e.target.style.height = `${e.target.scrollHeight}px`;
+                        }
+                      }}
+                      onBlur={() => saveEdit(task.id)}
+                      onKeyDown={e => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          saveEdit(task.id);
+                        }
+                        if (e.key === "Escape") {
+                          setEditingTaskId(null);
+                          setEditingText("");
+                        }
+                      }}
+                      className="w-full rounded px-2 py-1 border-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent dark:scrollbar-thumb-gray-600 dark:scrollbar-track-transparent resize-none overflow-auto focus:outline-none"
+                      rows={4}
+                      style={{ minHeight: "6rem" }}
+                    />
+                  </div>
+                ) : (
+                  <span className="font-medium whitespace-pre-wrap break-words w-full block">
+                    {task.text}
+                  </span>
+                )}
               </div>
               {/* Task meta: due date, priority, actions */}
               <div className="flex flex-wrap items-center gap-2 mt-2 justify-between w-full">
