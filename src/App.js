@@ -392,6 +392,14 @@ const App = () => {
                 "flex flex-col p-3 rounded-md border",
                 "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
               )}
+              // Make the whole card clickable for editing
+              onClick={() => {
+                setEditingTaskId(task.id);
+                setEditingText(task.text);
+                setEditingPriority(task.priority);
+                setEditingDueDate(task.dueDate ? new Date(task.dueDate) : null);
+              }}
+              style={{ cursor: editingTaskId === task.id ? "default" : "pointer" }}
             >
               {/* Task text */}
               <div
@@ -400,13 +408,6 @@ const App = () => {
                     ? "pr-1 w-full"
                     : "max-h-24 overflow-y-auto pr-1 w-full scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent dark:scrollbar-thumb-gray-600 dark:scrollbar-track-transparent"
                 }
-                onClick={() => {
-                  setEditingTaskId(task.id);
-                  setEditingText(task.text);
-                  setEditingPriority(task.priority);
-                  setEditingDueDate(task.dueDate ? new Date(task.dueDate) : null);
-                }}
-                style={{ cursor: "pointer" }}
               >
                 {editingTaskId === task.id ? (
                   <div
@@ -442,12 +443,12 @@ const App = () => {
                       style={{ minHeight: "6rem" }}
                     />
                     {/* Priority and Due Date Editors */}
-                    <div className="flex gap-2 mt-2">
+                    <div className="flex gap-2 mt-0">
                       {/* Priority Editor */}
                       <select
                         value={editingPriority}
                         onChange={e => setEditingPriority(e.target.value)}
-                        className="pl-2 pr-2 py-1 rounded-lg shadow-sm border text-xs text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 bg-gradient-to-r from-blue-100 to-indigo-200 dark:from-blue-900 dark:to-indigo-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        className="pl-2 pr-2 py-1 rounded-lg shadow-sm border text-xs text-white border-gray-300 dark:border-gray-700 bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-900 dark:to-indigo-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                       >
                         <option value="High">🔴 High</option>
                         <option value="Medium">🟡 Medium</option>
@@ -461,12 +462,12 @@ const App = () => {
                           <div className="relative w-full">
                             <button
                               type="button"
-                              className="flex items-center px-2 py-1 rounded-lg border text-xs bg-gradient-to-r from-blue-100 to-indigo-200 dark:from-blue-900 dark:to-indigo-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white"
+                              className="flex items-center px-2 py-1 rounded-lg border text-xs bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-900 dark:to-indigo-900 border-gray-300 dark:border-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                             >
                               {editingDueDate ? (
                                 <X
                                   size={14}
-                                  className="text-gray-900 dark:text-white"
+                                  className="text-white"
                                   aria-label="Clear date"
                                   onClick={e => {
                                     e.stopPropagation();
@@ -475,7 +476,7 @@ const App = () => {
                                   }}
                                 />
                               ) : (
-                                <CalendarIcon size={14} className="text-gray-900 dark:text-white" />
+                                <CalendarIcon size={14} className="text-white" />
                               )}
                               <span className="ml-1">
                                 {editingDueDate ? format(editingDueDate, "MM/dd/yyyy") : "Due Date"}
@@ -489,20 +490,23 @@ const App = () => {
                       />
                       {/* Save Button */}
                       <button
-                        onClick={() => saveEdit(task.id)}
-                        className="ml-2 px-2 py-1 rounded bg-blue-500 text-white text-xs font-semibold hover:bg-blue-600 transition"
+                        onClick={e => {
+                          e.stopPropagation();
+                          saveEdit(task.id);
+                        }}
+                        className="ml-2 px-2 py-1 rounded bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-900 dark:to-indigo-900 text-white text-xs font-semibold hover:brightness-110 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
                         tabIndex={0}
                         type="button"
                       >
                         Save
                       </button>
-                      {/* Cancel Button */}
                       <button
-                        onClick={() => {
+                        onClick={e => {
+                          e.stopPropagation();
                           setEditingTaskId(null);
                           setEditingText("");
                         }}
-                        className="px-2 py-1 rounded bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-white text-xs font-semibold hover:bg-gray-400 dark:hover:bg-gray-600 transition"
+                        className="px-2 py-1 rounded bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-900 dark:to-indigo-900 text-white text-xs font-semibold hover:brightness-110 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
                         tabIndex={0}
                         type="button"
                       >
