@@ -2,7 +2,7 @@
 
 // React and library imports
 import React, { useState, useEffect, useRef } from "react";
-import { Trash2, ChevronDown, ChevronUp, RotateCcw, Check, PlusCircle, Pencil, Settings, Filter, Eye, EyeOff, X } from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, RotateCcw, Check, PlusCircle, Pencil, Eye, EyeOff, X } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import Calendar from "react-calendar";
@@ -263,23 +263,12 @@ const App = () => {
           {/* Priority, Due Date, and Add Task buttons */}
           <div className="flex justify-between gap-3 w-full">
             {/* Priority dropdown */}
-            <div className="relative flex-1 min-w-[120px]">
-              <Settings
-                className="absolute left-3 top-2.5 text-white pointer-events-none z-10 bg-transparent"
-                size={18}
+            <div className="flex-1 min-w-[120px]">
+              <PriorityDropdown 
+                priority={priority} 
+                setPriority={setPriority} 
+                variant="task" 
               />
-              <select
-                value={priority}
-                onChange={(e) => setPriority(e.target.value)}
-                className="w-full pl-8 pr-0 py-2 rounded-lg shadow-sm border text-sm text-white border-transparent bg-gradient-to-r from-blue-500 to-indigo-600 focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none"
-              >
-                <option value="" disabled hidden>
-                  Priority
-                </option>
-                <option value="High">🔴 High</option>
-                <option value="Medium">🟡 Medium</option>
-                <option value="Low">🟢 Low</option>
-              </select>
             </div>
             {/* Due date picker */}
             <div className="relative flex-1 min-w-[100px] flex justify-center items-center">
