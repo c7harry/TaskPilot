@@ -2,7 +2,7 @@
 
 // React and library imports
 import React, { useState, useEffect, useRef } from "react";
-import { Trash2, ChevronDown, ChevronUp, Sun, Moon, RotateCcw, Check, PlusCircle, Pencil, Settings, Filter, Eye, EyeOff, X, Briefcase, User } from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, RotateCcw, Check, PlusCircle, Pencil, Settings, Filter, Eye, EyeOff, X, Briefcase, User } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import Calendar from "react-calendar";
@@ -356,12 +356,12 @@ const App = () => {
             <select
               value={filterPriority}
               onChange={(e) => setFilterPriority(e.target.value)}
-              className="pl-10 pr-2 py-2 rounded-lg shadow-sm border text-sm text-white border-transparent bg-gradient-to-r from-blue-500 to-indigo-600 focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none w-auto"
+              className="pl-10 pr-2 py-2 rounded-lg shadow-sm border text-sm text-white border-transparent bg-gradient-to-r from-blue-500 to-indigo-600 focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none w-auto font-bold"
             >
-              <option value="All">All Priorities</option>
-              <option value="High">🔴 High</option>
-              <option value="Medium">🟡 Medium</option>
-              <option value="Low">🟢 Low</option>
+              <option value="All" className="font-normal">All Priorities</option>
+              <option value="High" className="font-normal">🔴 High</option>
+              <option value="Medium" className="font-normal">🟡 Medium</option>
+              <option value="Low" className="font-normal">🟢 Low</option>
             </select>
           </div>
           {/* Calendar show/hide button */}
@@ -600,17 +600,31 @@ const App = () => {
             );
           })}
         </AnimatePresence>
+        
+        {/* No tasks placeholder */}
+        {filteredTasks.length === 0 && (
+          <div className="text-center py-12 px-4">
+            <div className="text-gray-500 dark:text-gray-400 text-lg font-medium mb-2">
+              No tasks found for {profile}
+            </div>
+            <div className="text-gray-400 dark:text-gray-500 text-sm">
+              Click "Add Task" to create your first task
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Show/hide completed tasks button */}
-      <button
-        onClick={() => setShowCompleted(!showCompleted)}
-        className="flex items-center gap-1 text-sm font-medium text-white px-1.5 py-1.3 rounded bg-gradient-to-r from-blue-500 to-indigo-600 shadow-sm hover:brightness-110 transition"
-      >
-        {showCompleted ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-        {showCompleted ? <EyeOff size={14} /> : <Eye size={14} />}
-        {showCompleted ? "Hide" : "Show"} Completed Tasks ({completedTasks.length})
-      </button>
+      {/* Show/hide completed tasks button - only show if there are completed tasks */}
+      {completedTasks.length > 0 && (
+        <button
+          onClick={() => setShowCompleted(!showCompleted)}
+          className="flex items-center gap-1 text-sm font-medium text-white px-1.5 py-1.3 rounded bg-gradient-to-r from-blue-500 to-indigo-600 shadow-sm hover:brightness-110 transition"
+        >
+          {showCompleted ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          {showCompleted ? <EyeOff size={14} /> : <Eye size={14} />}
+          {showCompleted ? "Hide" : "Show"} Completed Tasks ({completedTasks.length})
+        </button>
+      )}
 
       {/* Completed tasks list (collapsible) */}
       <AnimatePresence>
