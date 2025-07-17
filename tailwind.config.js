@@ -9,10 +9,15 @@ module.exports = {
     ],
   theme: {
     extend: {
-    transitionProperty: {
-      'theme': 'background-color, border-color, color, fill, stroke',
+      fontFamily: {
+        'inter': ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        'poppins': ['Poppins', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        'roboto': ['Roboto', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica Neue', 'Arial', 'sans-serif'],
+      },
+      transitionProperty: {
+        'theme': 'background-color, border-color, color, fill, stroke',
+      },
     },
-  },
   },
   plugins: [
   require('tailwind-scrollbar'),

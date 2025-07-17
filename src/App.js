@@ -199,7 +199,7 @@ const App = () => {
 
   // Main render
   return (
-    <div className="min-h-screen p-4 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white w-[400px] overflow-y-auto">
+    <div className="min-h-screen p-4 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white w-[400px] overflow-y-auto font-poppins">
       {/* Header: Profile switch, logo, dark mode toggle */}
       <div className="relative flex items-center justify-between h-10 mb-5 w-full">
         {/* Profile switch buttons */}
