@@ -14,6 +14,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { format, isToday, isTomorrow, parse } from "date-fns";
 import ThemeToggle from "./ThemeToggle";
 import Radio from "./Radio";
+import PriorityDropdown from "./PriorityDropdown";
 
 // Main App component
 const App = () => {
@@ -332,22 +333,10 @@ const App = () => {
       <div className="border-t border-black pt-2 mb-4 dark:border-white">
         <div className="flex justify-between items-center mb-4 gap-4">
           {/* Priority filter dropdown */}
-          <div className="relative inline-block">
-            <Filter
-              className="absolute left-3 top-2.5 text-gray-200 pointer-events-none z-10 bg-transparent"
-              size={18}
-            />
-            <select
-              value={filterPriority}
-              onChange={(e) => setFilterPriority(e.target.value)}
-              className="pl-10 pr-2 py-2 rounded-lg shadow-sm border text-sm text-white border-transparent bg-gradient-to-r from-blue-500 to-indigo-600 focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none w-auto font-bold"
-            >
-              <option value="All" className="font-normal">All Priorities</option>
-              <option value="High" className="font-normal">🔴 High</option>
-              <option value="Medium" className="font-normal">🟡 Medium</option>
-              <option value="Low" className="font-normal">🟢 Low</option>
-            </select>
-          </div>
+          <PriorityDropdown 
+            filterPriority={filterPriority} 
+            setFilterPriority={setFilterPriority} 
+          />
           {/* Calendar show/hide button */}
           <button
             onClick={() => setShowCalendar(!showCalendar)}
