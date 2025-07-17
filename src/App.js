@@ -2,7 +2,7 @@
 
 // React and library imports
 import React, { useState, useEffect, useRef } from "react";
-import { Trash2, ChevronDown, ChevronUp, RotateCcw, Check, PlusCircle, Pencil, Settings, Filter, Eye, EyeOff, X, Briefcase, User } from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, RotateCcw, Check, PlusCircle, Pencil, Settings, Filter, Eye, EyeOff, X } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import Calendar from "react-calendar";
@@ -13,6 +13,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format, isToday, isTomorrow, parse } from "date-fns";
 import ThemeToggle from "./ThemeToggle";
+import Radio from "./Radio";
 
 // Main App component
 const App = () => {
@@ -202,26 +203,9 @@ const App = () => {
     <div className="min-h-screen p-4 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white w-[400px] overflow-y-auto font-poppins">
       {/* Header: Profile switch, logo, dark mode toggle */}
       <div className="relative flex items-center justify-between h-10 mb-5 w-full">
-        {/* Profile switch buttons */}
+        {/* Profile switch radio buttons */}
         <div className="flex flex-col space-y-2 z-10">
-          {["Work", "Personal"].map((prof) => {
-            const Icon = prof === "Work" ? Briefcase : User;
-            return (
-              <button
-                key={prof}
-                onClick={() => setProfile(prof)}
-                className={clsx(
-                  "flex items-center space-x-1 px-2 py-1 rounded-full font-medium text-xs text-white bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-200 shadow",
-                  profile === prof
-                    ? "ring-2 ring-black ring-offset-0 dark:ring-white dark:ring-offset-gray-800"
-                    : "opacity-80 hover:opacity-100"
-                )}
-              >
-                <Icon className="w-3.5 h-3.5" />
-                <span>{prof}</span>
-              </button>
-            );
-          })}
+          <Radio profile={profile} setProfile={setProfile} />
         </div>
 
         {/* Logo in the center */}
