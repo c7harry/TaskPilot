@@ -29,6 +29,7 @@ const App = () => {
   const [editingText, setEditingText] = useState("");
   const [editingPriority, setEditingPriority] = useState("");
   const [editingDueDate, setEditingDueDate] = useState(null);
+  const [showTaskInput, setShowTaskInput] = useState(false);
   const textareaRef = useRef(null);
 
   // Expose React globally for Chrome extension compatibility
@@ -227,109 +228,125 @@ const App = () => {
           <img
             src="/header.png"
             alt="TaskPilot Logo"
-            className="h-14 w-auto object-contain"
+            className="h-12 w-auto object-contain"
           />
         </div>
 
-        {/* Dark mode toggle */}
-        <div className="z-10 mr-10">
-          <button onClick={() => setDarkMode(!darkMode)}>
-            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
-        </div>
-      </div>
-
-      {/* Task input area */}
-      <div className="relative flex flex-col gap-1.5 mb-2">
-        {/* Task text input */}
-        <Pencil className="absolute left-3 top-3 text-white-400 pointer-events-none" size={16} />
-        <textarea
-          ref={textareaRef}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              addTask();
-            }
-          }}
-          rows={1}
-          className="w-full pl-9 pr-4 py-2 resize-none overflow-hidden rounded-lg shadow-sm border text-sm
-            bg-gradient-to-br from-blue-200 to-indigo-300 dark:from-blue-900 dark:to-indigo-900
-            bg-opacity-70 dark:bg-opacity-50
-            border-gray-300 dark:border-gray-700
-            focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-900 dark:text-white"
-          onInput={(e) => {
-            e.target.style.height = "auto";
-            e.target.style.height = `${e.target.scrollHeight}px`;
-          }}
-          placeholder="Write a task..."
-        />
-
-        {/* Priority, Due Date, and Add Task buttons */}
-        <div className="flex justify-between gap-3 w-full">
-          {/* Priority dropdown */}
-          <div className="relative flex-1 min-w-[120px]">
-            <Settings
-              className="absolute left-3 top-2.5 text-white pointer-events-none z-10 bg-transparent"
-              size={18}
-            />
-            <select
-              value={priority}
-              onChange={(e) => setPriority(e.target.value)}
-              className="w-full pl-8 pr-0 py-2 rounded-lg shadow-sm border text-sm text-white border-transparent bg-gradient-to-r from-blue-500 to-indigo-600 focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none"
-            >
-              <option value="" disabled hidden>
-                Priority
-              </option>
-              <option value="High">🔴 High</option>
-              <option value="Medium">🟡 Medium</option>
-              <option value="Low">🟢 Low</option>
-            </select>
-          </div>
-          {/* Due date picker */}
-          <div className="relative flex-1 min-w-[100px] flex justify-center items-center">
-            <DatePicker
-              selected={dueDate}
-              onChange={(date) => setDueDate(date)}
-              customInput={
-                <div className="relative w-full">
-                  <button
-                    type="button"
-                    className={`w-full flex items-center justify-center p-2 rounded-lg shadow-sm border text-sm transition-colors
-                    bg-gradient-to-r from-blue-500 to-indigo-600 border-gray-600 text-white
-                    focus:ring-2 focus:ring-blue-500 focus:outline-none`}
-                  >
-                    {dueDate ? (
-                      <X
-                        size={18}
-                        className="text-white"
-                        aria-label="Clear date"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                          setDueDate(null);
-                        }}
-                      />
-                    ) : (
-                      <CalendarIcon size={18} className="text-white" />
-                    )}
-                  </button>
-                </div>
-              }
-              calendarClassName="custom-datepicker-calendar dark:bg-gray-800 dark:text-white"
-              dateFormat="MM/dd/yyyy"
-            />
-          </div>
-          {/* Add task button */}
-          <button
-            onClick={addTask}
-            className="flex-1 min-w-[100px] flex items-center justify-center gap-1 py-2 px-3 text-sm font-semibold rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-sm hover:scale-[1.03] transition-transform duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+        {/* Dark mode toggle and Add Task button */}
+        <div className="flex flex-col space-y-1 z-10">
+          <button onClick={() => setDarkMode(!darkMode)}
+            className="flex items-center justify-center px-1.5 py-1.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow hover:brightness-110 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label="Toggle dark mode"
           >
-            <PlusCircle size={20} />
+            {darkMode ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+          <button
+            onClick={() => setShowTaskInput((v) => !v)}
+            className="flex items-center gap-1 px-2 py-1 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-xs font-semibold shadow hover:brightness-110 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label={showTaskInput ? "Close Task Input" : "Open Task Input"}
+          >
+            {showTaskInput ? <X size={12} /> : <ChevronDown size={12} />} Add Task
           </button>
         </div>
       </div>
+
+      {/* Task input area (conditionally rendered) */}
+      {showTaskInput && (
+        <div className="relative flex flex-col gap-1.5 mb-2">
+          {/* Task text input */}
+          <Pencil className="absolute left-3 top-3 text-white-400 pointer-events-none" size={16} />
+          <textarea
+            ref={textareaRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                addTask();
+                setShowTaskInput(false);
+              }
+            }}
+            rows={1}
+            className="w-full pl-9 pr-4 py-2 resize-none overflow-hidden rounded-lg shadow-sm border text-sm
+              bg-gradient-to-br from-blue-200 to-indigo-300 dark:from-blue-900 dark:to-indigo-900
+              bg-opacity-70 dark:bg-opacity-50
+              border-gray-300 dark:border-gray-700
+              focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-900 dark:text-white"
+            onInput={(e) => {
+              e.target.style.height = "auto";
+              e.target.style.height = `${e.target.scrollHeight}px`;
+            }}
+            placeholder="Write a task..."
+          />
+
+          {/* Priority, Due Date, and Add Task buttons */}
+          <div className="flex justify-between gap-3 w-full">
+            {/* Priority dropdown */}
+            <div className="relative flex-1 min-w-[120px]">
+              <Settings
+                className="absolute left-3 top-2.5 text-white pointer-events-none z-10 bg-transparent"
+                size={18}
+              />
+              <select
+                value={priority}
+                onChange={(e) => setPriority(e.target.value)}
+                className="w-full pl-8 pr-0 py-2 rounded-lg shadow-sm border text-sm text-white border-transparent bg-gradient-to-r from-blue-500 to-indigo-600 focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none"
+              >
+                <option value="" disabled hidden>
+                  Priority
+                </option>
+                <option value="High">🔴 High</option>
+                <option value="Medium">🟡 Medium</option>
+                <option value="Low">🟢 Low</option>
+              </select>
+            </div>
+            {/* Due date picker */}
+            <div className="relative flex-1 min-w-[100px] flex justify-center items-center">
+              <DatePicker
+                selected={dueDate}
+                onChange={(date) => setDueDate(date)}
+                customInput={
+                  <div className="relative w-full">
+                    <button
+                      type="button"
+                      className={`w-full flex items-center justify-center p-2 rounded-lg shadow-sm border text-sm transition-colors
+                      bg-gradient-to-r from-blue-500 to-indigo-600 border-gray-600 text-white
+                      focus:ring-2 focus:ring-blue-500 focus:outline-none`}
+                    >
+                      {dueDate ? (
+                        <X
+                          size={18}
+                          className="text-white"
+                          aria-label="Clear date"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            setDueDate(null);
+                          }}
+                        />
+                      ) : (
+                        <CalendarIcon size={18} className="text-white" />
+                      )}
+                    </button>
+                  </div>
+                }
+                calendarClassName="custom-datepicker-calendar dark:bg-gray-800 dark:text-white"
+                dateFormat="MM/dd/yyyy"
+              />
+            </div>
+            {/* Add task button */}
+            <button
+              onClick={() => {
+                addTask();
+                setShowTaskInput(false);
+              }}
+              className="flex-1 min-w-[100px] flex items-center justify-center gap-1 py-2 px-3 text-sm font-semibold rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-sm hover:scale-[1.03] transition-transform duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+              <PlusCircle size={20} />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Filter and calendar toggle */}
       <div className="border-t border-black pt-2 mb-4 dark:border-white">
