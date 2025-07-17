@@ -12,6 +12,7 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format, isToday, isTomorrow, parse } from "date-fns";
+import ThemeToggle from "./ThemeToggle";
 
 // Main App component
 const App = () => {
@@ -234,12 +235,7 @@ const App = () => {
 
         {/* Dark mode toggle and Add Task button */}
         <div className="flex flex-col space-y-1 z-10">
-          <button onClick={() => setDarkMode(!darkMode)}
-            className="flex items-center justify-center px-1.5 py-1.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow hover:brightness-110 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
-            aria-label="Toggle dark mode"
-          >
-            {darkMode ? <Sun size={16} /> : <Moon size={16} />}
-          </button>
+          <ThemeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
           <button
             onClick={() => setShowTaskInput((v) => !v)}
             className="flex items-center gap-1 px-2 py-1 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-xs font-semibold shadow hover:brightness-110 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
