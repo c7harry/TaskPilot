@@ -47,31 +47,44 @@ const PriorityDropdown = ({ filterPriority, setFilterPriority, priority, setPrio
   return (
     <div className="relative inline-block" ref={dropdownRef}>
       {/* Main dropdown button */}
-      <button
+      <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg shadow-md border text-sm font-semibold
-          transition-all duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
-          focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900 
-          min-w-[140px] justify-between ${
-            variant === "filter" 
-              ? "bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white border-transparent"
-              : "bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white border-transparent"
+        className={`flex items-center gap-2 px-4 py-2 rounded-2xl shadow-md border-2 text-sm font-semibold
+          transition-all duration-300 hover:shadow-lg focus:outline-none
+          min-w-[140px] justify-between transform hover:scale-[1.02] ${
+            variant === "filter"
+              ? `${currentValue === 'All' ? 'bg-white dark:bg-gray-800 text-purple-700 dark:text-purple-300 border-purple-400 dark:border-purple-400' : 'bg-white dark:bg-gray-800 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-600'}`
+              : "bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-blue-400 dark:border-indigo-700 backdrop-blur-sm"
           }`}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
       >
         <div className="flex items-center gap-2">
-          {variant === "filter" && <Filter size={16} />}
+          {variant === "filter" && (
+            <motion.div
+              animate={{ rotate: isOpen ? 360 : 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Filter size={16} />
+            </motion.div>
+          )}
           <span className="flex items-center gap-1">
-            <span>{selectedPriority?.icon}</span>
+            <motion.span
+              animate={{ scale: isOpen ? 1.1 : 1 }}
+              transition={{ duration: 0.2 }}
+            >
+              {selectedPriority?.icon}
+            </motion.span>
             <span className="font-medium">{selectedPriority?.label}</span>
           </span>
         </div>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: 0.3, type: "spring", stiffness: 200 }}
         >
           <ChevronDown size={16} />
         </motion.div>
-      </button>
+      </motion.button>
 
       {/* Dropdown menu */}
       <AnimatePresence>
@@ -80,21 +93,27 @@ const PriorityDropdown = ({ filterPriority, setFilterPriority, priority, setPrio
             initial={{ opacity: 0, y: -10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="absolute top-full left-0 mt-2 w-full bg-white dark:bg-gray-800 
-              rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 
-              overflow-hidden z-50 min-w-[180px]"
+            transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
+            className="absolute top-full left-0 mt-2 w-full bg-white/90 dark:bg-gray-800/90 
+              rounded-2xl shadow-xl border border-purple-200 dark:border-purple-700 
+              overflow-hidden z-50 min-w-[180px] backdrop-blur-md"
           >
-            {priorities.map((priority) => (
-              <button
+            {priorities.map((priority, index) => (
+              <motion.button
                 key={priority.value}
                 onClick={() => handleSelect(priority.value)}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.2, delay: index * 0.05 }}
                 className={`w-full px-4 py-3 text-left flex items-center gap-3 text-sm 
-                  transition-all duration-150 hover:bg-gray-50 dark:hover:bg-gray-700
+                  transition-all duration-200 hover:bg-purple-50 dark:hover:bg-purple-900/20
+                  hover:scale-[1.02] transform
                   ${currentValue === priority.value 
-                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 font-medium' 
+                    ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-medium' 
                     : 'text-gray-700 dark:text-gray-300'
                   }`}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
                 <span className="text-base">{priority.icon}</span>
                 <span className="flex-1">{priority.label}</span>
@@ -102,10 +121,11 @@ const PriorityDropdown = ({ filterPriority, setFilterPriority, priority, setPrio
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="w-2 h-2 bg-blue-500 rounded-full"
+                    transition={{ type: "spring", stiffness: 300 }}
+                    className="w-2 h-2 bg-purple-500 rounded-full"
                   />
                 )}
-              </button>
+              </motion.button>
             ))}
           </motion.div>
         )}

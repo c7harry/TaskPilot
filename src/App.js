@@ -277,27 +277,48 @@ const App = () => {
                 onChange={(date) => setDueDate(date)}
                 customInput={
                   <div className="relative w-full">
-                    <button
+                    <motion.button
                       type="button"
-                      className={`w-full flex items-center justify-center p-2 rounded-lg shadow-sm border text-sm transition-colors
-                      bg-gradient-to-r from-blue-500 to-indigo-600 border-gray-600 text-white
-                      focus:ring-2 focus:ring-blue-500 focus:outline-none`}
+                      className={`w-full flex items-center justify-center p-2 rounded-full shadow-lg border-2 text-sm transition-all duration-300 transform
+                        ${dueDate 
+                          ? 'bg-gradient-to-r from-blue-500 to-indigo-600 border-blue-400 text-white shadow-blue-200' 
+                          : 'bg-gradient-to-r from-blue-400 to-indigo-500 border-blue-300 text-white shadow-blue-200'
+                        } hover:scale-110 hover:shadow-xl focus:ring-2 focus:ring-blue-400 focus:outline-none`}
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      whileTap={{ scale: 0.95 }}
+                      animate={{ 
+                        boxShadow: dueDate 
+                          ? "0 0 20px rgba(59, 130, 246, 0.3)" 
+                          : "0 0 15px rgba(96, 165, 250, 0.3)"
+                      }}
+                      transition={{ duration: 0.2 }}
                     >
                       {dueDate ? (
-                        <X
-                          size={18}
-                          className="text-white"
-                          aria-label="Clear date"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            e.preventDefault();
-                            setDueDate(null);
-                          }}
-                        />
+                        <motion.div
+                          initial={{ rotate: 0 }}
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 0.5 }}
+                        >
+                          <X
+                            size={18}
+                            className="text-white"
+                            aria-label="Clear date"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              setDueDate(null);
+                            }}
+                          />
+                        </motion.div>
                       ) : (
-                        <CalendarIcon size={18} className="text-white" />
+                        <motion.div
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        >
+                          <CalendarIcon size={18} className="text-white" />
+                        </motion.div>
                       )}
-                    </button>
+                    </motion.button>
                   </div>
                 }
                 calendarClassName="custom-datepicker-calendar dark:bg-gray-800 dark:text-white"
@@ -305,21 +326,44 @@ const App = () => {
               />
             </div>
             {/* Add task button */}
-            <button
+            <motion.button
               onClick={() => {
                 addTask();
                 setShowTaskInput(false);
               }}
-              className="flex-1 min-w-[100px] flex items-center justify-center gap-1 py-2 px-3 text-sm font-semibold rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-sm hover:scale-[1.03] transition-transform duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="flex-1 min-w-[100px] flex items-center justify-center gap-2 py-2 px-4 text-sm font-semibold rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-2 border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+              whileHover={{ 
+                scale: 1.05, 
+                boxShadow: "0 20px 30px rgba(59, 130, 246, 0.4)",
+                background: "linear-gradient(45deg, #3b82f6, #4f46e5, #6366f1)"
+              }}
+              whileTap={{ scale: 0.95 }}
+              animate={{ 
+                background: [
+                  "linear-gradient(45deg, #3b82f6, #4f46e5, #6366f1)",
+                  "linear-gradient(45deg, #4f46e5, #6366f1, #3b82f6)",
+                  "linear-gradient(45deg, #6366f1, #3b82f6, #4f46e5)",
+                  "linear-gradient(45deg, #3b82f6, #4f46e5, #6366f1)"
+                ]
+              }}
+              transition={{ 
+                background: { duration: 3, repeat: Infinity },
+                default: { duration: 0.2 }
+              }}
             >
-              <PlusCircle size={20} />
-            </button>
+              <motion.div
+                animate={{ rotate: [0, 360] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              >
+                <PlusCircle size={20} />
+              </motion.div>
+              <span className="font-semibold">Add</span>
+            </motion.button>
           </div>
         </div>
       )}
 
       {/* Filter and calendar toggle */}
-      <div className="border-t border-black pt-2 mb-4 dark:border-white">
         <div className="flex justify-between items-center mb-4 gap-4">
           {/* Priority filter dropdown */}
           <PriorityDropdown 
@@ -327,25 +371,36 @@ const App = () => {
             setFilterPriority={setFilterPriority} 
           />
           {/* Calendar show/hide button */}
-          <button
+          <motion.button
             onClick={() => setShowCalendar(!showCalendar)}
-            className="flex items-center gap-1 px-4 py-2 text-sm font-semibold bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl border-2 transition-all duration-300 transform 
+              ${showCalendar 
+                ? 'border-purple-400 bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300 shadow-lg' 
+                : 'border-purple-300 bg-white text-purple-600 dark:border-purple-600 dark:bg-gray-800 dark:text-purple-400 shadow-md'
+              } hover:scale-105 hover:shadow-lg focus:outline-none`}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             aria-label={showCalendar ? "Hide Calendar" : "Show Calendar"}
           >
-            {showCalendar ? (
-              <>
-                <ChevronUp size={16} />
-                Calendar
-              </>
-            ) : (
-              <>
-                <ChevronDown size={16} />
-                Calendar
-              </>
-            )}
-          </button>
+            <motion.div
+              animate={{ rotate: showCalendar ? 180 : 0 }}
+              transition={{ duration: 0.3, type: "spring", stiffness: 200 }}
+            >
+              {showCalendar ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </motion.div>
+            <span className="relative">
+              Calendar
+              {showCalendar && (
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 0.3 }}
+                  className="absolute bottom-0 left-0 h-0.5 bg-purple-400 rounded-full"
+                />
+              )}
+            </span>
+          </motion.button>
         </div>
-      </div>
 
       {/* Calendar display */}
       {showCalendar && (
