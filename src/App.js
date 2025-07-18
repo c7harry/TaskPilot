@@ -33,6 +33,7 @@ const App = () => {
   const [editingPriority, setEditingPriority] = useState("");
   const [editingDueDate, setEditingDueDate] = useState(null);
   const [showTaskInput, setShowTaskInput] = useState(false);
+  const [inputError, setInputError] = useState(false);
   const textareaRef = useRef(null);
 
   // Expose React globally for Chrome extension compatibility
@@ -72,7 +73,14 @@ const App = () => {
 
   // Add a new task
   const addTask = () => {
-    if (!input.trim()) return;
+    if (!input.trim()) {
+      setInputError(true);
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
+      return;
+    }
+    setInputError(false);
     const formattedDueDate = dueDate ? format(dueDate, "MM/dd/yyyy") : null;
 
     const newTask = {
@@ -236,32 +244,37 @@ const App = () => {
         <div className="relative flex flex-col gap-1.5 mb-2">
           {/* Task text input */}
           <Pencil className="absolute left-3 top-3 text-white-400 pointer-events-none" size={16} />
-          <textarea
+          <motion.textarea
             ref={textareaRef}
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+              setInput(e.target.value);
+              if (inputError) setInputError(false);
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
+                const wasError = !input.trim();
                 addTask();
-                setShowTaskInput(false);
+                if (!wasError) setShowTaskInput(false);
               }
             }}
             rows={1}
-            className="w-full pl-9 pr-4 py-2 resize-none overflow-hidden rounded-lg shadow-sm border text-sm
+            className={`w-full pl-9 pr-4 py-2 resize-none overflow-hidden rounded-lg shadow-sm border text-sm
               bg-gradient-to-br from-blue-200 to-indigo-300 dark:from-blue-900 dark:to-indigo-900
               bg-opacity-70 dark:bg-opacity-50
-              border-gray-300 dark:border-gray-700
-              focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-900 dark:text-white"
+              ${inputError ? 'border-red-500 focus:ring-2 focus:ring-red-500' : 'border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500'} focus:outline-none text-gray-900 dark:text-white`}
             onInput={(e) => {
               e.target.style.height = "auto";
               e.target.style.height = `${e.target.scrollHeight}px`;
             }}
             placeholder="Write a task..."
+            animate={inputError ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : false}
+            transition={{ duration: 0.5 }}
           />
 
           {/* Priority, Due Date, and Add Task buttons */}
-          <div className="flex justify-between gap-3 w-full">
+          <div className="flex items-center gap-3 w-full">
             {/* Priority dropdown */}
             <div className="flex-1 min-w-[120px]">
               <PriorityDropdown 
@@ -271,7 +284,7 @@ const App = () => {
               />
             </div>
             {/* Due date picker */}
-            <div className="relative flex-1 min-w-[100px] flex justify-center items-center">
+            <div className="relative flex-shrink-0 w-[60px] flex justify-center items-center">
               <DatePicker
                 selected={dueDate}
                 onChange={(date) => setDueDate(date)}
@@ -326,39 +339,42 @@ const App = () => {
               />
             </div>
             {/* Add task button */}
-            <motion.button
-              onClick={() => {
-                addTask();
-                setShowTaskInput(false);
-              }}
-              className="flex-1 min-w-[100px] flex items-center justify-center gap-2 py-2 px-4 text-sm font-semibold rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-2 border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
-              whileHover={{ 
-                scale: 1.05, 
-                boxShadow: "0 20px 30px rgba(59, 130, 246, 0.4)",
-                background: "linear-gradient(45deg, #3b82f6, #4f46e5, #6366f1)"
-              }}
-              whileTap={{ scale: 0.95 }}
-              animate={{ 
-                background: [
-                  "linear-gradient(45deg, #3b82f6, #4f46e5, #6366f1)",
-                  "linear-gradient(45deg, #4f46e5, #6366f1, #3b82f6)",
-                  "linear-gradient(45deg, #6366f1, #3b82f6, #4f46e5)",
-                  "linear-gradient(45deg, #3b82f6, #4f46e5, #6366f1)"
-                ]
-              }}
-              transition={{ 
-                background: { duration: 3, repeat: Infinity },
-                default: { duration: 0.2 }
-              }}
-            >
-              <motion.div
-                animate={{ rotate: [0, 360] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            <div className="flex-1 min-w-[90px] max-w-[140px]">
+              <motion.button
+                onClick={() => {
+                  const wasError = !input.trim();
+                  addTask();
+                  if (!wasError) setShowTaskInput(false);
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-sm font-semibold rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-2 border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+                whileHover={{ 
+                  scale: 1.05, 
+                  boxShadow: "0 20px 30px rgba(59, 130, 246, 0.4)",
+                  background: "linear-gradient(45deg, #3b82f6, #4f46e5, #6366f1)"
+                }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ 
+                  background: [
+                    "linear-gradient(45deg, #3b82f6, #4f46e5, #6366f1)",
+                    "linear-gradient(45deg, #4f46e5, #6366f1, #3b82f6)",
+                    "linear-gradient(45deg, #6366f1, #3b82f6, #4f46e5)",
+                    "linear-gradient(45deg, #3b82f6, #4f46e5, #6366f1)"
+                  ]
+                }}
+                transition={{ 
+                  background: { duration: 3, repeat: Infinity },
+                  default: { duration: 0.2 }
+                }}
               >
-                <PlusCircle size={20} />
-              </motion.div>
-              <span className="font-semibold">Add</span>
-            </motion.button>
+                <motion.div
+                  animate={{ rotate: [0, 360] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                >
+                  <PlusCircle size={20} />
+                </motion.div>
+                <span className="font-semibold">Add</span>
+              </motion.button>
+            </div>
           </div>
         </div>
       )}
@@ -496,12 +512,12 @@ const App = () => {
                         style={{ minHeight: "6rem" }}
                       />
                       {/* Priority and Due Date Editors */}
-                      <div className="flex gap-2 mt-0">
+                      <div className="flex gap-2 mt-0 w-full items-center">
                         {/* Priority Editor */}
                         <select
                           value={editingPriority}
                           onChange={e => setEditingPriority(e.target.value)}
-                          className="pl-2 pr-2 py-1 rounded-lg shadow-sm border text-xs text-white border-gray-300 dark:border-gray-700 bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-900 dark:to-indigo-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          className="pl-2 pr-2 py-1 rounded-lg shadow-sm border text-xs text-white border-gray-300 dark:border-gray-700 bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-900 dark:to-indigo-900 focus:ring-2 focus:ring-blue-500 focus:outline-none min-w-[80px] max-w-[90px]"
                         >
                           <option value="High">🔴 High</option>
                           <option value="Medium">🟡 Medium</option>
@@ -512,10 +528,10 @@ const App = () => {
                           selected={editingDueDate}
                           onChange={date => setEditingDueDate(date)}
                           customInput={
-                            <div className="relative w-full">
+                            <div className="relative min-w-[110px] max-w-[120px]">
                               <button
                                 type="button"
-                                className="flex items-center px-2 py-1 rounded-lg border text-xs bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-900 dark:to-indigo-900 border-gray-300 dark:border-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                className="flex items-center px-2 py-1 rounded-lg border text-xs bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-900 dark:to-indigo-900 border-gray-300 dark:border-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none w-full"
                               >
                                 {editingDueDate ? (
                                   <X
@@ -531,7 +547,7 @@ const App = () => {
                                 ) : (
                                   <CalendarIcon size={14} className="text-white" />
                                 )}
-                                <span className="ml-1">
+                                <span className="ml-1 truncate">
                                   {editingDueDate ? format(editingDueDate, "MM/dd/yyyy") : "Due Date"}
                                 </span>
                               </button>
@@ -574,45 +590,47 @@ const App = () => {
                   )}
                 </div>
                 {/* Task meta: due date, priority, actions */}
-                <div className="flex flex-wrap items-center gap-2 mt-2 justify-between w-full">
-                  <div className="flex flex-wrap items-center gap-2">
-                    {task.dueDate && (
-                      <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                        📅 Due: {formatLocalDate(task.dueDate)}
-                      </span>
-                    )}
-                    <span
-                      className={clsx(
-                        "text-xs px-2 py-1 rounded-full font-semibold",
-                        task.priority === "High" &&
-                          "bg-red-100 text-red-700 dark:bg-red-700 dark:text-white",
-                        task.priority === "Medium" &&
-                          "bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-white",
-                        task.priority === "Low" &&
-                          "bg-green-100 text-green-800 dark:bg-green-600 dark:text-white"
+                {editingTaskId !== task.id && (
+                  <div className="flex flex-wrap items-center gap-2 mt-2 justify-between w-full">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {task.dueDate && (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                          📅 Due: {formatLocalDate(task.dueDate)}
+                        </span>
                       )}
-                    >
-                      {priorityIcon[task.priority]} {task.priority}
-                    </span>
-                  </div>
-                  {/* Complete and delete buttons */}
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => toggleComplete(task.id)}
-                      className="flex items-center justify-center px-2 py-1 rounded-full border border-teal-500 bg-teal-50 text-teal-700 hover:bg-teal-100 hover:scale-110 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400"
-                    >
-                      <Check size={14} />
-                    </button>
-                    <button
-                      onClick={() => deleteTask(task.id)}
-                      className="focus:outline-none focus:ring-2 focus:ring-red-400 rounded-full"
-                    >
-                      <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full border border-red-700 dark:border-red-400 bg-red-100 text-red-700 dark:bg-red-700 dark:text-white">
-                        <Trash2 size={16} />
+                      <span
+                        className={clsx(
+                          "text-xs px-2 py-1 rounded-full font-semibold",
+                          task.priority === "High" &&
+                            "bg-red-100 text-red-700 dark:bg-red-700 dark:text-white",
+                          task.priority === "Medium" &&
+                            "bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-white",
+                          task.priority === "Low" &&
+                            "bg-green-100 text-green-800 dark:bg-green-600 dark:text-white"
+                        )}
+                      >
+                        {priorityIcon[task.priority]} {task.priority}
                       </span>
-                    </button>
+                    </div>
+                    {/* Complete and delete buttons */}
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => toggleComplete(task.id)}
+                        className="flex items-center justify-center px-2 py-1 rounded-full border border-teal-500 bg-teal-50 text-teal-700 hover:bg-teal-100 hover:scale-110 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                      >
+                        <Check size={14} />
+                      </button>
+                      <button
+                        onClick={() => deleteTask(task.id)}
+                        className="focus:outline-none focus:ring-2 focus:ring-red-400 rounded-full"
+                      >
+                        <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full border border-red-700 dark:border-red-400 bg-red-100 text-red-700 dark:bg-red-700 dark:text-white">
+                          <Trash2 size={16} />
+                        </span>
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
               </motion.div>
             );
           })}
