@@ -239,6 +239,40 @@ const App = () => {
         </div>
       </div>
 
+      {/* Task Statistics - Compact */}
+      <div className="mb-3 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center gap-3 text-xs">
+            <span className="text-blue-600 dark:text-blue-400 font-medium">
+              {filteredTasks.length} pending
+            </span>
+            <span className="text-green-600 dark:text-green-400 font-medium">
+              {completedTasks.length} completed
+            </span>
+          </div>
+          <div className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+            {filteredTasks.length + completedTasks.length === 0 
+              ? "0%" 
+              : `${Math.round((completedTasks.length / (filteredTasks.length + completedTasks.length)) * 100)}%`
+            }
+          </div>
+        </div>
+        
+        {/* Progress Bar - Thinner */}
+        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+          <motion.div
+            className="bg-gradient-to-r from-green-500 to-emerald-500 h-1.5 rounded-full"
+            initial={{ width: 0 }}
+            animate={{ 
+              width: filteredTasks.length + completedTasks.length === 0 
+                ? "0%" 
+                : `${(completedTasks.length / (filteredTasks.length + completedTasks.length)) * 100}%`
+            }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+          />
+        </div>
+      </div>
+
       {/* Task input area (conditionally rendered) */}
       {showTaskInput && (
         <div className="relative flex flex-col gap-1.5 mb-2">
@@ -252,7 +286,7 @@ const App = () => {
               if (inputError) setInputError(false);
             }}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
+              if ((e.key === "Enter" && !e.shiftKey) || (e.key === "Enter" && e.ctrlKey)) {
                 e.preventDefault();
                 const wasError = !input.trim();
                 addTask();
@@ -379,8 +413,8 @@ const App = () => {
         </div>
       )}
 
-      {/* Filter and calendar toggle */}
-        <div className="flex justify-between items-center mb-4 gap-4">
+      {/* Filter and calendar toggle - Compact */}
+        <div className="flex justify-between items-center mb-3 gap-3">
           {/* Priority filter dropdown */}
           <PriorityDropdown 
             filterPriority={filterPriority} 
@@ -389,11 +423,11 @@ const App = () => {
           {/* Calendar show/hide button */}
           <motion.button
             onClick={() => setShowCalendar(!showCalendar)}
-            className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl border-2 transition-all duration-300 transform 
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border-2 transition-all duration-300 transform 
               ${showCalendar 
-                ? 'border-purple-400 bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300 shadow-lg' 
-                : 'border-purple-300 bg-white text-purple-600 dark:border-purple-600 dark:bg-gray-800 dark:text-purple-400 shadow-md'
-              } hover:scale-105 hover:shadow-lg focus:outline-none`}
+                ? 'border-purple-400 bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300 shadow-md' 
+                : 'border-purple-300 bg-white text-purple-600 dark:border-purple-600 dark:bg-gray-800 dark:text-purple-400 shadow-sm'
+              } hover:scale-105 hover:shadow-md focus:outline-none`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             aria-label={showCalendar ? "Hide Calendar" : "Show Calendar"}
@@ -402,7 +436,7 @@ const App = () => {
               animate={{ rotate: showCalendar ? 180 : 0 }}
               transition={{ duration: 0.3, type: "spring", stiffness: 200 }}
             >
-              {showCalendar ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              {showCalendar ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </motion.div>
             <span className="relative">
               Calendar
@@ -418,13 +452,12 @@ const App = () => {
           </motion.button>
         </div>
 
-      {/* Calendar display */}
+      {/* Calendar display - Compact */}
       {showCalendar && (
-        <div
-          className="mb-4 relative p-2 rounded-lg border dark:border-gray-700 bg-gradient-to-br from-blue-200 to-indigo-300 dark:from-blue-900 dark:to-indigo-900">
+        <div className="mb-3 relative p-1.5 rounded-lg border dark:border-gray-700 bg-gradient-to-br from-blue-200 to-indigo-300 dark:from-blue-900 dark:to-indigo-900">
           <Calendar
             tileContent={tileContent}
-            className="w-full rounded-lg bg-transparent dark:bg-transparent"
+            className="w-full rounded-lg bg-transparent dark:bg-transparent text-xs"
             tileClassName="group"
             prev2Label={null}
             next2Label={null}
@@ -432,8 +465,8 @@ const App = () => {
         </div>
       )}
 
-      {/* Active tasks list */}
-      <div className="space-y-2 mb-4">
+      {/* Active tasks list - Compact */}
+      <div className="space-y-1.5 mb-3">
         <AnimatePresence>
           {filteredTasks.map((task) => {
             const dueSoon = isDueSoon(task.dueDate);
@@ -444,7 +477,7 @@ const App = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
                 className={clsx(
-                  "flex flex-col p-3 rounded-md border relative transition-all duration-300",
+                  "flex flex-col p-2.5 rounded-md border relative transition-all duration-300",
                   "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700",
                   dueSoon && "border-2 border-red-500 dark:border-red-400 shadow-lg"
                 )}
@@ -589,18 +622,18 @@ const App = () => {
                     </span>
                   )}
                 </div>
-                {/* Task meta: due date, priority, actions */}
+                {/* Task meta: due date, priority, actions - Compact */}
                 {editingTaskId !== task.id && (
-                  <div className="flex flex-wrap items-center gap-2 mt-2 justify-between w-full">
-                    <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-1.5 mt-1.5 justify-between w-full">
+                    <div className="flex flex-wrap items-center gap-1.5">
                       {task.dueDate && (
-                        <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                          📅 Due: {formatLocalDate(task.dueDate)}
+                        <span className="inline-flex items-center gap-1 text-xs font-medium px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                          📅 {formatLocalDate(task.dueDate)}
                         </span>
                       )}
                       <span
                         className={clsx(
-                          "text-xs px-2 py-1 rounded-full font-semibold",
+                          "text-xs px-1.5 py-0.5 rounded-full font-semibold",
                           task.priority === "High" &&
                             "bg-red-100 text-red-700 dark:bg-red-700 dark:text-white",
                           task.priority === "Medium" &&
@@ -612,20 +645,20 @@ const App = () => {
                         {priorityIcon[task.priority]} {task.priority}
                       </span>
                     </div>
-                    {/* Complete and delete buttons */}
-                    <div className="flex items-center gap-2">
+                    {/* Complete and delete buttons - Smaller */}
+                    <div className="flex items-center gap-1.5">
                       <button
                         onClick={() => toggleComplete(task.id)}
-                        className="flex items-center justify-center px-2 py-1 rounded-full border border-teal-500 bg-teal-50 text-teal-700 hover:bg-teal-100 hover:scale-110 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                        className="flex items-center justify-center px-1.5 py-1 rounded-full border border-teal-500 bg-teal-50 text-teal-700 hover:bg-teal-100 hover:scale-110 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400"
                       >
-                        <Check size={14} />
+                        <Check size={12} />
                       </button>
                       <button
                         onClick={() => deleteTask(task.id)}
                         className="focus:outline-none focus:ring-2 focus:ring-red-400 rounded-full"
                       >
-                        <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full border border-red-700 dark:border-red-400 bg-red-100 text-red-700 dark:bg-red-700 dark:text-white">
-                          <Trash2 size={16} />
+                        <span className="inline-flex items-center gap-1 text-xs font-medium px-1.5 py-0.5 rounded-full border border-red-700 dark:border-red-400 bg-red-100 text-red-700 dark:bg-red-700 dark:text-white">
+                          <Trash2 size={12} />
                         </span>
                       </button>
                     </div>
@@ -636,10 +669,10 @@ const App = () => {
           })}
         </AnimatePresence>
         
-        {/* No tasks placeholder */}
+        {/* No tasks placeholder - Compact */}
         {filteredTasks.length === 0 && (
-          <div className="text-center py-12 px-4">
-            <div className="text-gray-500 dark:text-gray-400 text-lg font-medium mb-2">
+          <div className="text-center py-8 px-4">
+            <div className="text-gray-500 dark:text-gray-400 text-base font-medium mb-1">
               No tasks found for {profile}
             </div>
             <div className="text-gray-400 dark:text-gray-500 text-sm">
@@ -649,15 +682,15 @@ const App = () => {
         )}
       </div>
 
-      {/* Show/hide completed tasks button - only show if there are completed tasks */}
+      {/* Show/hide completed tasks button - Compact */}
       {completedTasks.length > 0 && (
         <button
           onClick={() => setShowCompleted(!showCompleted)}
-          className="flex items-center gap-1 text-sm font-medium text-white px-1.5 py-1.3 rounded bg-gradient-to-r from-blue-500 to-indigo-600 shadow-sm hover:brightness-110 transition"
+          className="flex items-center gap-1 text-xs font-medium text-white px-2 py-1 rounded bg-gradient-to-r from-blue-500 to-indigo-600 shadow-sm hover:brightness-110 transition"
         >
-          {showCompleted ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-          {showCompleted ? <EyeOff size={14} /> : <Eye size={14} />}
-          {showCompleted ? "Hide" : "Show"} Completed Tasks ({completedTasks.length})
+          {showCompleted ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+          {showCompleted ? <EyeOff size={12} /> : <Eye size={12} />}
+          {showCompleted ? "Hide" : "Show"} Completed ({completedTasks.length})
         </button>
       )}
 
@@ -668,14 +701,14 @@ const App = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-3 space-y-2 overflow-hidden"
+            className="mt-2 space-y-1.5 overflow-hidden"
           >
             {completedTasks.map((task) => (
               <motion.div
                 key={task.id}
                 layout
                 className={clsx(
-                  "p-3 rounded-md border",
+                  "p-2.5 rounded-md border",
                   "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500"
                 )}
               >
