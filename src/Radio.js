@@ -36,88 +36,127 @@ const StyledWrapper = styled.div`
   .radio-input {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
   }
 
   .radio-option {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .radio-option:hover {
+    background-color: rgba(59, 130, 246, 0.1);
   }
 
   .radio-label {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
-    color: #000000;
+    color: #374151;
     cursor: pointer;
     user-select: none;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
   }
 
   .radio-label:hover {
-    color: #374151;
+    color: #1f2937;
   }
 
   .input {
     -webkit-appearance: none;
-   /* remove default */
+    appearance: none;
     display: block;
     margin: 0;
-    width: 16px;
-    height: 16px;
-    border-radius: 8px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
     cursor: pointer;
-    vertical-align: middle;
-    box-shadow: hsla(0,0%,100%,.15) 0 1px 1px, inset hsla(0,0%,0%,.5) 0 0 0 1px;
-    background-color: hsla(0,0%,0%,.2);
-    background-image: -webkit-radial-gradient( hsla(200,100%,90%,1) 0%, hsla(200,100%,70%,1) 15%, hsla(200,100%,60%,.3) 28%, hsla(200,100%,30%,0) 70% );
-    background-repeat: no-repeat;
-    -webkit-transition: background-position .15s cubic-bezier(.8, 0, 1, 1),
-      -webkit-transform .25s cubic-bezier(.8, 0, 1, 1);
+    border: 2px solid #d1d5db;
+    background-color: #ffffff;
+    transition: all 0.2s ease;
     outline: none;
+    position: relative;
+  }
+
+  .input:hover {
+    border-color: #3b82f6;
+    transform: scale(1.05);
   }
 
   .input:checked {
-    -webkit-transition: background-position .2s .15s cubic-bezier(0, 0, .2, 1),
-      -webkit-transform .25s cubic-bezier(0, 0, .2, 1);
+    border-color: #3b82f6;
+    background-color: #3b82f6;
+    transform: scale(1.1);
+  }
+
+  .input:checked::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #ffffff;
   }
 
   .input:active {
-    -webkit-transform: scale(1.3);
-    -webkit-transition: -webkit-transform .1s cubic-bezier(0, 0, .2, 1);
-  }
-
-  /* The up/down direction logic */
-  .input,
-  .input:active {
-    background-position: 0 16px;
-  }
-
-  .input:checked {
-    background-position: 0 0;
-  }
-
-  .input:checked ~ .input,
-  .input:checked ~ .input:active {
-    background-position: 0 -16px;
+    transform: scale(0.95);
   }
 
   .input:checked + .radio-label {
-    color: #2563eb;
+    color: #3b82f6;
     font-weight: 600;
   }
 
-  /* Dark mode styles using class-based approach */
+  .radio-option:has(.input:checked) {
+    background-color: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+  }
+
+  /* Dark mode styles */
+  .dark & .radio-option {
+    border: 1px solid transparent;
+  }
+
+  .dark & .radio-option:hover {
+    background-color: rgba(96, 165, 250, 0.1);
+  }
+  
   .dark & .radio-label {
-    color: #f3f4f6;
+    color: #d1d5db;
   }
   
   .dark & .radio-label:hover {
-    color: #ffffff;
+    color: #f3f4f6;
+  }
+
+  .dark & .input {
+    border-color: #6b7280;
+    background-color: #374151;
+  }
+
+  .dark & .input:hover {
+    border-color: #60a5fa;
+  }
+
+  .dark & .input:checked {
+    border-color: #60a5fa;
+    background-color: #60a5fa;
   }
   
   .dark & .input:checked + .radio-label {
     color: #60a5fa;
+  }
+
+  .dark & .radio-option:has(.input:checked) {
+    background-color: rgba(96, 165, 250, 0.1);
+    border-color: rgba(96, 165, 250, 0.2);
   }
 `;
 
