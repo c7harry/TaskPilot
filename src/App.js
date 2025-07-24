@@ -175,6 +175,11 @@ const App = () => {
                 const viewportWidth = window.innerWidth;
                 const viewportHeight = window.innerHeight;
                 
+                // Find the calendar container - try both selectors
+                const calendarContainer = e.currentTarget.closest('.calendar-container') || 
+                                        e.currentTarget.closest('.react-calendar');
+                const calendarRect = calendarContainer ? calendarContainer.getBoundingClientRect() : null;
+                
                 // Reset positioning and classes
                 tooltip.style.left = '50%';
                 tooltip.style.right = 'auto';
@@ -183,27 +188,46 @@ const App = () => {
                 tooltip.classList.remove('tooltip-below');
                 tooltip.classList.add('tooltip-above');
                 
-                // Get tooltip dimensions after reset
+                // Force a reflow to get accurate dimensions
+                void tooltip.offsetHeight;
                 const tooltipRect = tooltip.getBoundingClientRect();
                 
-                // Check horizontal overflow
+                // Calculate boundaries (use calendar boundaries with padding if available, otherwise viewport)
+                const padding = 15;
+                const leftBoundary = calendarRect ? calendarRect.left + padding : padding;
+                const rightBoundary = calendarRect ? calendarRect.right - padding : viewportWidth - padding;
+                const topBoundary = calendarRect ? calendarRect.top + padding : padding;
+                const bottomBoundary = calendarRect ? calendarRect.bottom - padding : viewportHeight - padding;
+                
+                // Check horizontal overflow against calendar boundaries
                 const tooltipLeft = rect.left + rect.width / 2 - tooltipRect.width / 2;
                 const tooltipRight = tooltipLeft + tooltipRect.width;
                 
-                if (tooltipLeft < 10) {
-                  // Overflow on left
-                  tooltip.style.left = '10px';
+                if (tooltipLeft < leftBoundary) {
+                  // Overflow on left - align to left boundary
+                  const offset = leftBoundary - rect.left;
+                  tooltip.style.left = `${Math.max(0, offset)}px`;
                   tooltip.style.transform = 'translateY(-100%)';
-                } else if (tooltipRight > viewportWidth - 10) {
-                  // Overflow on right
+                } else if (tooltipRight > rightBoundary) {
+                  // Overflow on right - align to right boundary
+                  const offset = rect.right - rightBoundary;
                   tooltip.style.left = 'auto';
-                  tooltip.style.right = '10px';
+                  tooltip.style.right = `${Math.max(0, offset)}px`;
                   tooltip.style.transform = 'translateY(-100%)';
                 }
                 
-                // Check vertical overflow
-                if (rect.top - tooltipRect.height < 10) {
-                  // Would overflow at top, show below instead
+                // Check vertical overflow against calendar boundaries
+                const tooltipTop = rect.top - tooltipRect.height - 10;
+                const tooltipBottom = rect.bottom + tooltipRect.height + 10;
+                
+                if (tooltipTop < topBoundary && tooltipBottom <= bottomBoundary) {
+                  // Would overflow at top but fits below, show below instead
+                  tooltip.style.top = 'calc(100% + 10px)';
+                  tooltip.style.transform = tooltip.style.transform.replace('translateY(-100%)', 'translateY(0)');
+                  tooltip.classList.remove('tooltip-above');
+                  tooltip.classList.add('tooltip-below');
+                } else if (tooltipTop < topBoundary && tooltipBottom > bottomBoundary) {
+                  // Doesn't fit above or below - show below anyway (fixed height)
                   tooltip.style.top = 'calc(100% + 10px)';
                   tooltip.style.transform = tooltip.style.transform.replace('translateY(-100%)', 'translateY(0)');
                   tooltip.classList.remove('tooltip-above');
@@ -247,7 +271,7 @@ const App = () => {
                   let currentLine = '';
                   
                   for (const word of words) {
-                    if (lines.length >= 4) break; // Max 3 lines
+                    if (lines.length >= 4) break; 
                     
                     if ((currentLine + ' ' + word).trim().length <= 25) {
                       currentLine = (currentLine + ' ' + word).trim();
@@ -574,7 +598,7 @@ const App = () => {
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0, height: 0 }}
-          className="mb-3 relative p-3 rounded-xl border-2 border-purple-200 dark:border-purple-700 bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-purple-900/30 dark:to-indigo-900/30 shadow-lg"
+          className="mb-3 relative p-3 rounded-xl border-2 border-purple-200 dark:border-purple-700 bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-purple-900/30 dark:to-indigo-900/30 shadow-lg calendar-container"
         >
           <Calendar
             tileContent={tileContent}
@@ -582,6 +606,14 @@ const App = () => {
             tileClassName="group"
             prev2Label={null}
             next2Label={null}
+            selectRange={false}
+            showNeighboringMonth={true}
+            tileDisabled={() => true}
+            onClickDay={(value, event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              return false;
+            }}
           />
         </motion.div>
       )}

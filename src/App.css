@@ -81,6 +81,14 @@ button:active {
   font-size: 12px !important;
 }
 
+/* Calendar container with proper tooltip containment */
+.calendar-container {
+  position: relative;
+  overflow: visible;
+  /* Establish a stacking context for tooltips */
+  z-index: 1;
+}
+
 .react-calendar {
   background: transparent !important;
   border: none !important;
@@ -90,6 +98,9 @@ button:active {
   max-width: none !important;
   font-family: inherit;
   overflow: visible !important;
+  position: relative;
+  /* Ensure tooltips can be positioned relative to this container */
+  contain: layout;
 }
 
 /* Calendar Navigation */
@@ -163,13 +174,20 @@ button:active {
   align-items: center !important;
   justify-content: center !important;
   overflow: visible !important;
+  cursor: default !important;
 }
 
+/* Allow hover effects but prevent clicking */
 .react-calendar__tile:hover {
   background: rgba(147, 51, 234, 0.1) !important;
   color: #7c3aed !important;
   transform: scale(1.1) !important;
   box-shadow: 0 2px 4px rgba(124, 58, 237, 0.2) !important;
+}
+
+/* Re-enable pointer events for tooltips inside tiles */
+.react-calendar__tile .tooltip {
+  pointer-events: auto !important;
 }
 
 /* Today */
@@ -305,6 +323,8 @@ button:active {
   pointer-events: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  /* Fixed height - no scrolling */
+  overflow: hidden;
 }
 
 .tooltip-content::after {
