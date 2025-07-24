@@ -415,7 +415,7 @@ const App = () => {
 
       {/* Task input area (conditionally rendered) */}
       {showTaskInput && (
-        <div className="relative flex flex-col gap-1.5 mb-2">
+        <div className="relative flex flex-col gap-1.5 mb-2 task-input-area">
           {/* Task text input */}
           <Pencil className="absolute left-3 top-3 text-white-400 pointer-events-none" size={16} />
           <motion.textarea
