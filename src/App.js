@@ -166,9 +166,54 @@ const App = () => {
 
       if (dayTasks.length > 0) {
         return (
-          <div className="tooltip">
-            <div className="flex flex-wrap gap-[2px] justify-center items-center">
-              {dayTasks.map((task) => (
+          <div 
+            className="tooltip"
+            onMouseEnter={(e) => {
+              const tooltip = e.currentTarget.querySelector('.tooltip-content');
+              if (tooltip) {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                
+                // Reset positioning and classes
+                tooltip.style.left = '50%';
+                tooltip.style.right = 'auto';
+                tooltip.style.transform = 'translateX(-50%) translateY(-100%)';
+                tooltip.style.top = '-10px';
+                tooltip.classList.remove('tooltip-below');
+                tooltip.classList.add('tooltip-above');
+                
+                // Get tooltip dimensions after reset
+                const tooltipRect = tooltip.getBoundingClientRect();
+                
+                // Check horizontal overflow
+                const tooltipLeft = rect.left + rect.width / 2 - tooltipRect.width / 2;
+                const tooltipRight = tooltipLeft + tooltipRect.width;
+                
+                if (tooltipLeft < 10) {
+                  // Overflow on left
+                  tooltip.style.left = '10px';
+                  tooltip.style.transform = 'translateY(-100%)';
+                } else if (tooltipRight > viewportWidth - 10) {
+                  // Overflow on right
+                  tooltip.style.left = 'auto';
+                  tooltip.style.right = '10px';
+                  tooltip.style.transform = 'translateY(-100%)';
+                }
+                
+                // Check vertical overflow
+                if (rect.top - tooltipRect.height < 10) {
+                  // Would overflow at top, show below instead
+                  tooltip.style.top = 'calc(100% + 10px)';
+                  tooltip.style.transform = tooltip.style.transform.replace('translateY(-100%)', 'translateY(0)');
+                  tooltip.classList.remove('tooltip-above');
+                  tooltip.classList.add('tooltip-below');
+                }
+              }
+            }}
+          >
+            <div className="flex flex-wrap gap-[1px] justify-center items-center mt-1">
+              {dayTasks.slice(0, 3).map((task) => (
                 <span
                   key={task.id}
                   className="dot"
@@ -182,16 +227,86 @@ const App = () => {
                   }}
                 ></span>
               ))}
+              {dayTasks.length > 3 && (
+                <span className="text-xs text-purple-600 dark:text-purple-400 font-bold ml-1">
+                  +{dayTasks.length - 3}
+                </span>
+              )}
             </div>
             <div className="tooltip-content">
-              {dayTasks.map((task) => (
-                <div
-                  key={task.id}
-                  className={`tooltip-task ${task.priority.toLowerCase()}`}
-                >
-                  {task.text} ({task.priority})
+              <div className="text-xs font-semibold text-gray-200 mb-2 border-b border-gray-600 pb-1">
+                {dayTasks.length} task{dayTasks.length > 1 ? 's' : ''} due
+              </div>
+              {dayTasks.slice(0, 5).map((task) => {
+                // Function to break text into lines of max 25 characters each
+                const formatTaskText = (text) => {
+                  if (text.length <= 25) return text;
+                  
+                  const words = text.split(' ');
+                  const lines = [];
+                  let currentLine = '';
+                  
+                  for (const word of words) {
+                    if (lines.length >= 4) break; // Max 3 lines
+                    
+                    if ((currentLine + ' ' + word).trim().length <= 25) {
+                      currentLine = (currentLine + ' ' + word).trim();
+                    } else {
+                      if (currentLine) {
+                        lines.push(currentLine);
+                        currentLine = word.length <= 25 ? word : word.slice(0, 22) + '...';
+                      } else {
+                        lines.push(word.length <= 25 ? word : word.slice(0, 22) + '...');
+                      }
+                    }
+                  }
+                  
+                  if (currentLine && lines.length < 3) {
+                    lines.push(currentLine);
+                  }
+                  
+                  // If we have more text and we're at the line limit, add ellipsis to last line
+                  if (lines.length === 3 && text.length > lines.join(' ').length) {
+                    const lastLine = lines[2];
+                    if (lastLine.length > 22) {
+                      lines[2] = lastLine.slice(0, 22) + '...';
+                    } else {
+                      lines[2] = lastLine + '...';
+                    }
+                  }
+                  
+                  return lines;
+                };
+                
+                const textLines = formatTaskText(task.text);
+                
+                return (
+                  <div
+                    key={task.id}
+                    className={`tooltip-task ${task.priority.toLowerCase()}`}
+                  >
+                    <div className="font-medium max-w-[200px] block">
+                      {Array.isArray(textLines) ? (
+                        textLines.map((line, index) => (
+                          <div key={index} className="leading-tight">
+                            {line}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="leading-tight">{textLines}</div>
+                      )}
+                    </div>
+                    <span className="text-xs opacity-75">
+                      {task.priority}
+                    </span>
+                  </div>
+                );
+              })}
+              {dayTasks.length > 5 && (
+                <div className="text-xs text-gray-400 mt-2 text-center border-t border-gray-600 pt-2">
+                  +{dayTasks.length - 5} more task{dayTasks.length - 5 > 1 ? 's' : ''}
                 </div>
-              ))}
+              )}
             </div>
           </div>
         );
@@ -453,17 +568,22 @@ const App = () => {
           </motion.button>
         </div>
 
-      {/* Calendar display - Compact */}
+      {/* Calendar display - Compact & Themed */}
       {showCalendar && (
-        <div className="mb-3 relative p-1.5 rounded-lg border dark:border-gray-700 bg-gradient-to-br from-blue-200 to-indigo-300 dark:from-blue-900 dark:to-indigo-900">
+        <motion.div 
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="mb-3 relative p-3 rounded-xl border-2 border-purple-200 dark:border-purple-700 bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-purple-900/30 dark:to-indigo-900/30 shadow-lg"
+        >
           <Calendar
             tileContent={tileContent}
-            className="w-full rounded-lg bg-transparent dark:bg-transparent text-xs"
+            className="w-full rounded-lg bg-transparent dark:bg-transparent custom-calendar"
             tileClassName="group"
             prev2Label={null}
             next2Label={null}
           />
-        </div>
+        </motion.div>
       )}
 
       {/* Active tasks list - Compact */}
