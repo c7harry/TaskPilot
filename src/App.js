@@ -239,39 +239,40 @@ const App = () => {
         </div>
       </div>
 
-      {/* Task Statistics - Compact */}
-      <div className="mb-3 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center gap-3 text-xs">
-            <span className="text-blue-600 dark:text-blue-400 font-medium">
-              {filteredTasks.length} pending
-            </span>
-            <span className="text-green-600 dark:text-green-400 font-medium">
-              {completedTasks.length} completed
-            </span>
-          </div>
-          <div className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-            {filteredTasks.length + completedTasks.length === 0 
-              ? "0%" 
-              : `${Math.round((completedTasks.length / (filteredTasks.length + completedTasks.length)) * 100)}%`
-            }
-          </div>
-        </div>
-        
-        {/* Progress Bar - Thinner */}
-        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
-          <motion.div
-            className="bg-gradient-to-r from-green-500 to-emerald-500 h-1.5 rounded-full"
-            initial={{ width: 0 }}
-            animate={{ 
-              width: filteredTasks.length + completedTasks.length === 0 
+      {/* Task Statistics - Compact (only show if 2+ tasks) */}
+      {(filteredTasks.length + completedTasks.length) >= 2 && (
+        <div className="mb-3 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-3 text-xs">
+              <span className="text-blue-600 dark:text-blue-400 font-medium">
+                {filteredTasks.length} pending
+              </span>
+              <span className="text-green-600 dark:text-green-400 font-medium">
+                {completedTasks.length} completed
+              </span>
+            </div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+              {filteredTasks.length + completedTasks.length === 0 
                 ? "0%" 
-                : `${(completedTasks.length / (filteredTasks.length + completedTasks.length)) * 100}%`
-            }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-          />
+                : `${Math.round((completedTasks.length / (filteredTasks.length + completedTasks.length)) * 100)}%`
+              }
+            </div>
+          </div>
+          {/* Progress Bar - Thinner */}
+          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+            <motion.div
+              className="bg-gradient-to-r from-green-500 to-emerald-500 h-1.5 rounded-full"
+              initial={{ width: 0 }}
+              animate={{ 
+                width: filteredTasks.length + completedTasks.length === 0 
+                  ? "0%" 
+                  : `${(completedTasks.length / (filteredTasks.length + completedTasks.length)) * 100}%`
+              }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Task input area (conditionally rendered) */}
       {showTaskInput && (
