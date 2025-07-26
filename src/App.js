@@ -2,7 +2,7 @@
 
 // React and library imports
 import React, { useState, useEffect, useRef } from "react";
-import { Trash2, ChevronDown, ChevronUp, RotateCcw, Check, PlusCircle, Pencil, Eye, EyeOff, X, Plus, List, CalendarDays, Bell } from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, RotateCcw, Check, PlusCircle, Pencil, Eye, EyeOff, X, Plus, List, CalendarDays, Bell, HelpCircle, Keyboard } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import Calendar from "react-calendar";
@@ -36,12 +36,104 @@ const App = () => {
   const [inputError, setInputError] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [lastNotificationCheck, setLastNotificationCheck] = useState(Date.now());
+  const [showShortcuts, setShowShortcuts] = useState(false);
   const textareaRef = useRef(null);
 
   // Expose React globally for Chrome extension compatibility
   if (typeof window !== "undefined") {
     window.React = React;
   }
+
+  // Calculate filtered and completed tasks early so they can be used in effects
+  const filteredTasks = tasks.filter(
+    (task) =>
+      task.profile === profile &&
+      !task.completed &&
+      (filterPriority === "All" || task.priority === filterPriority)
+  );
+
+  const completedTasks = tasks.filter(
+    (task) => task.profile === profile && task.completed
+  );
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ignore shortcuts when user is typing in input fields
+      if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
+        return;
+      }
+
+      // Ctrl+N: New task
+      if (e.ctrlKey && e.key === 'n') {
+        e.preventDefault();
+        setShowTaskInput(true);
+        // Focus the textarea after a short delay to ensure it's rendered
+        setTimeout(() => {
+          if (textareaRef.current) {
+            textareaRef.current.focus();
+          }
+        }, 100);
+      }
+
+      // Ctrl+H: Toggle show completed tasks
+      if (e.ctrlKey && e.key === 'h') {
+        e.preventDefault();
+        if (completedTasks.length > 0) {
+          setShowCompleted(!showCompleted);
+        }
+      }
+
+      // Ctrl+D: Toggle dark mode
+      if (e.ctrlKey && e.key === 'd') {
+        e.preventDefault();
+        setDarkMode(!darkMode);
+      }
+
+      // Ctrl+C: Toggle calendar
+      if (e.ctrlKey && e.key === 'c') {
+        e.preventDefault();
+        setShowCalendar(!showCalendar);
+      }
+
+      // Ctrl+1/2/3: Set priority filter
+      if (e.ctrlKey && ['1', '2', '3', '4'].includes(e.key)) {
+        e.preventDefault();
+        const priorities = ['All', 'High', 'Medium', 'Low'];
+        setFilterPriority(priorities[parseInt(e.key) - 1]);
+      }
+
+      // Escape: Close task input or cancel editing
+      if (e.key === 'Escape') {
+        if (editingTaskId) {
+          setEditingTaskId(null);
+          setEditingText("");
+          setEditingPriority("");
+          setEditingDueDate(null);
+        } else if (showTaskInput) {
+          setShowTaskInput(false);
+          setInput("");
+          setDueDate(null);
+          setPriority("");
+        }
+      }
+
+      // Ctrl+T: Test notifications
+      if (e.ctrlKey && e.key === 't') {
+        e.preventDefault();
+        testNotification();
+      }
+
+      // Ctrl+K: Show keyboard shortcuts help
+      if (e.ctrlKey && e.key === 'k') {
+        e.preventDefault();
+        setShowShortcuts(!showShortcuts);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [showTaskInput, showCompleted, darkMode, showCalendar, completedTasks.length, editingTaskId, showShortcuts]);
 
   // Load tasks and dark mode from Chrome storage on mount
   useEffect(() => {
@@ -237,17 +329,10 @@ const App = () => {
   };
 
   // Filter tasks for current profile and priority (not completed)
-  const filteredTasks = tasks.filter(
-    (task) =>
-      task.profile === profile &&
-      !task.completed &&
-      (filterPriority === "All" || task.priority === filterPriority)
-  );
+  // (already calculated above before keyboard shortcuts)
 
-  // Filter completed tasks for current profile
-  const completedTasks = tasks.filter(
-    (task) => task.profile === profile && task.completed
-  );
+  // Filter completed tasks for current profile  
+  // (already calculated above before keyboard shortcuts)
 
   // Emoji icons for priority levels
   const priorityIcon = {
@@ -451,7 +536,8 @@ const App = () => {
 
   // Main render
   return (
-    <div className="min-h-screen p-4 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white w-[400px] overflow-y-auto font-poppins">
+    <div className="relative min-h-screen p-4 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white w-[400px] overflow-y-auto font-poppins"
+         style={{ minHeight: '600px' }}>
       {/* Header: Profile switch, logo, dark mode toggle */}
       <div className="relative flex items-center justify-between h-10 mb-5 w-full">
         {/* Profile switch radio buttons */}
@@ -472,6 +558,16 @@ const App = () => {
         <div className="flex flex-col space-y-1 z-10">
           <div className="flex items-center gap-1">
             <ThemeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
+            {/* Keyboard Shortcuts Help */}
+            <motion.button
+              onClick={() => setShowShortcuts(!showShortcuts)}
+              className="p-1 rounded-full transition-all duration-300 bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              title="Keyboard shortcuts (Ctrl+K)"
+            >
+              <Keyboard size={10} />
+            </motion.button>
             {/* Notification Status Indicator */}
             <motion.button
               onClick={testNotification}
@@ -531,6 +627,125 @@ const App = () => {
           </div>
         </div>
       )}
+
+      {/* Keyboard Shortcuts Help Modal */}
+      <AnimatePresence>
+        {showShortcuts && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={() => setShowShortcuts(false)}
+            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white dark:bg-gray-800 rounded-lg p-4 w-full max-w-[360px] mx-2 shadow-xl max-h-[80vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <Keyboard size={18} className="text-blue-600 dark:text-blue-400" />
+                <h3 className="text-base font-semibold text-gray-900 dark:text-white">
+                  Keyboard Shortcuts
+                </h3>
+                <button
+                  onClick={() => setShowShortcuts(false)}
+                  className="ml-auto p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  <X size={14} className="text-gray-500 dark:text-gray-400" />
+                </button>
+              </div>
+              
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-700 dark:text-gray-300 text-xs">New Task</span>
+                  <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono">
+                    Ctrl + N
+                  </kbd>
+                </div>
+                
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-700 dark:text-gray-300 text-xs">Toggle Dark Mode</span>
+                  <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono">
+                    Ctrl + D
+                  </kbd>
+                </div>
+                
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-700 dark:text-gray-300 text-xs">Toggle Calendar</span>
+                  <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono">
+                    Ctrl + C
+                  </kbd>
+                </div>
+                
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-700 dark:text-gray-300 text-xs">Show/Hide Completed</span>
+                  <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono">
+                    Ctrl + H
+                  </kbd>
+                </div>
+                
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-700 dark:text-gray-300 text-xs">Test Notifications</span>
+                  <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono">
+                    Ctrl + T
+                  </kbd>
+                </div>
+                
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-700 dark:text-gray-300 text-xs">Show Shortcuts</span>
+                  <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono">
+                    Ctrl + K
+                  </kbd>
+                </div>
+                
+                <div className="border-t border-gray-200 dark:border-gray-600 pt-2 mt-2">
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-1.5 text-sm">Priority Filters</h4>
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-700 dark:text-gray-300 text-xs">All Tasks</span>
+                      <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono">
+                        Ctrl + 1
+                      </kbd>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-700 dark:text-gray-300 text-xs">High Priority</span>
+                      <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono">
+                        Ctrl + 2
+                      </kbd>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-700 dark:text-gray-300 text-xs">Medium Priority</span>
+                      <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono">
+                        Ctrl + 3
+                      </kbd>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-700 dark:text-gray-300 text-xs">Low Priority</span>
+                      <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono">
+                        Ctrl + 4
+                      </kbd>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="border-t border-gray-200 dark:border-gray-600 pt-2 mt-2">
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-1.5 text-sm">General</h4>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-700 dark:text-gray-300 text-xs">Cancel/Close</span>
+                    <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono">
+                      Escape
+                    </kbd>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Task input area (conditionally rendered) */}
       {showTaskInput && (
