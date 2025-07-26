@@ -2,7 +2,7 @@
 
 // React and library imports
 import React, { useState, useEffect, useRef } from "react";
-import { Trash2, ChevronDown, ChevronUp, RotateCcw, Check, PlusCircle, Pencil, Eye, EyeOff, X, Plus, List, CalendarDays } from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, RotateCcw, Check, PlusCircle, Pencil, Eye, EyeOff, X, Plus, List, CalendarDays, Bell } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import Calendar from "react-calendar";
@@ -34,6 +34,8 @@ const App = () => {
   const [editingDueDate, setEditingDueDate] = useState(null);
   const [showTaskInput, setShowTaskInput] = useState(false);
   const [inputError, setInputError] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [lastNotificationCheck, setLastNotificationCheck] = useState(Date.now());
   const textareaRef = useRef(null);
 
   // Expose React globally for Chrome extension compatibility
@@ -65,6 +67,107 @@ const App = () => {
       chrome.storage.local.set({ tasks });
     }
   }, [tasks]);
+
+  // Request notification permission and check for due tasks
+  useEffect(() => {
+    const requestNotificationPermission = async () => {
+      if (typeof chrome !== "undefined" && chrome.notifications) {
+        // Chrome extension notifications are handled by permissions in manifest
+        setNotificationsEnabled(true);
+      } else if ("Notification" in window) {
+        // Fallback to browser notifications for development
+        const permission = await Notification.requestPermission();
+        setNotificationsEnabled(permission === "granted");
+      }
+    };
+
+    requestNotificationPermission();
+  }, []);
+
+  // Check for due tasks and send notifications
+  useEffect(() => {
+    const checkDueTasks = () => {
+      const now = new Date();
+      const today = format(now, "MM/dd/yyyy");
+      const tomorrow = format(new Date(now.getTime() + 24 * 60 * 60 * 1000), "MM/dd/yyyy");
+
+      if (!notificationsEnabled) return;
+
+      const dueTasks = tasks.filter(task => {
+        if (task.completed || !task.dueDate) return false;
+        return task.dueDate === today || task.dueDate === tomorrow;
+      });
+
+      dueTasks.forEach(task => {
+        const isTaskDueToday = task.dueDate === today;
+        const isTaskDueTomorrow = task.dueDate === tomorrow;
+        
+        // Check if we haven't notified about this task recently (avoid spam)
+        const taskNotificationKey = `notification_${task.id}_${task.dueDate}`;
+        const lastNotified = localStorage.getItem(taskNotificationKey);
+        const sixHoursAgo = Date.now() - (6 * 60 * 60 * 1000);
+        
+        if (lastNotified && parseInt(lastNotified) > sixHoursAgo) {
+          return; // Skip if we notified about this task in the last 6 hours
+        }
+
+        if (isTaskDueToday || isTaskDueTomorrow) {
+          sendTaskNotification(task, isTaskDueToday);
+          localStorage.setItem(taskNotificationKey, Date.now().toString());
+        }
+      });
+    };
+
+    // Check immediately and then every 30 minutes
+    checkDueTasks();
+    const interval = setInterval(checkDueTasks, 30 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, [tasks, notificationsEnabled]);
+
+  // Send notification for due tasks
+  const sendTaskNotification = (task, isDueToday) => {
+    const title = isDueToday ? "Task Due Today!" : "Task Due Tomorrow";
+    const message = task.text.length > 50 ? task.text.substring(0, 50) + "..." : task.text;
+    const priority = task.priority;
+    const priorityIcon = priority === "High" ? "🔴" : priority === "Medium" ? "🟡" : "🟢";
+
+    if (typeof chrome !== "undefined" && chrome.notifications) {
+      // Chrome extension notification
+      chrome.notifications.create({
+        type: 'basic',
+        iconUrl: '/logo.png', // Use your app icon
+        title: title,
+        message: `${priorityIcon} ${priority}: ${message}`,
+        priority: priority === "High" ? 2 : priority === "Medium" ? 1 : 0,
+        requireInteraction: priority === "High", // High priority tasks require user interaction
+      });
+    } else if ("Notification" in window && notificationsEnabled) {
+      // Fallback browser notification
+      new Notification(title, {
+        body: `${priorityIcon} ${priority}: ${message}`,
+        icon: '/logo.png',
+        tag: `task-${task.id}`, // Prevent duplicate notifications
+      });
+    }
+  };
+
+  // Manual notification test function
+  const testNotification = () => {
+    if (typeof chrome !== "undefined" && chrome.notifications) {
+      chrome.notifications.create({
+        type: 'basic',
+        iconUrl: '/logo.png',
+        title: 'TaskPilot Notifications Active',
+        message: 'You will receive notifications for tasks due today and tomorrow.',
+      });
+    } else if ("Notification" in window && notificationsEnabled) {
+      new Notification('TaskPilot Notifications Active', {
+        body: 'You will receive notifications for tasks due today and tomorrow.',
+        icon: '/logo.png',
+      });
+    }
+  };
 
   // Format date for display (can be customized)
   const formatLocalDate = (dateString) => {
@@ -367,13 +470,29 @@ const App = () => {
 
         {/* Dark mode toggle and Add Task button */}
         <div className="flex flex-col space-y-1 z-10">
-          <ThemeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
+          <div className="flex items-center gap-1">
+            <ThemeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
+            {/* Notification Status Indicator */}
+            <motion.button
+              onClick={testNotification}
+              className={`p-1 rounded-full transition-all duration-300 ${
+                notificationsEnabled 
+                  ? 'bg-green-100 text-green-600 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400' 
+                  : 'bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400'
+              }`}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              title={notificationsEnabled ? "Notifications enabled - Click to test" : "Notifications disabled"}
+            >
+              <Bell size={10} />
+            </motion.button>
+          </div>
           <button
             onClick={() => setShowTaskInput((v) => !v)}
             className="flex items-center gap-1 px-2 py-1 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-xs font-semibold shadow hover:brightness-110 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
             aria-label={showTaskInput ? "Close Task Input" : "Open Task Input"}
           >
-            {showTaskInput ? <X size={12} /> : <Plus size={12} />} Add Task
+            {showTaskInput ? <X size={12} /> : <Plus size={12} />} New Task
           </button>
         </div>
       </div>

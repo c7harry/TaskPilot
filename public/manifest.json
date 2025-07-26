@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "TaskPilot",
   "version": "1.0",
-  "description": "A React + Tailwind Chrome Extension",
+  "description": "A React + Tailwind Chrome Extension with notifications for due tasks",
   "action": {
     "default_popup": "index.html",
     "default_icon": {
@@ -11,7 +11,7 @@
       "128": "logo.png"
     }
   },
-  "permissions": ["storage"],
+  "permissions": ["storage", "notifications"],
   "icons": {
     "16": "logo.png",
     "48": "logo.png",
