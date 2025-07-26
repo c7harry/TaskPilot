@@ -2,7 +2,7 @@
 
 // React and library imports
 import React, { useState, useEffect, useRef } from "react";
-import { Trash2, ChevronDown, ChevronUp, RotateCcw, Check, PlusCircle, Pencil, Eye, EyeOff, X } from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, RotateCcw, Check, PlusCircle, Pencil, Eye, EyeOff, X, Plus, List, CalendarDays } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import Calendar from "react-calendar";
@@ -373,7 +373,7 @@ const App = () => {
             className="flex items-center gap-1 px-2 py-1 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-xs font-semibold shadow hover:brightness-110 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
             aria-label={showTaskInput ? "Close Task Input" : "Open Task Input"}
           >
-            {showTaskInput ? <X size={12} /> : <ChevronDown size={12} />} Add Task
+            {showTaskInput ? <X size={12} /> : <Plus size={12} />} Add Task
           </button>
         </div>
       </div>
@@ -576,7 +576,7 @@ const App = () => {
               animate={{ rotate: showCalendar ? 180 : 0 }}
               transition={{ duration: 0.3, type: "spring", stiffness: 200 }}
             >
-              {showCalendar ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+              {showCalendar ? <ChevronUp size={14} /> : <CalendarDays size={14} />}
             </motion.div>
             <span className="relative">
               Calendar
@@ -841,7 +841,7 @@ const App = () => {
           onClick={() => setShowCompleted(!showCompleted)}
           className="flex items-center gap-1 text-xs font-medium text-white px-2 py-1 rounded bg-gradient-to-r from-blue-500 to-indigo-600 shadow-sm hover:brightness-110 transition"
         >
-          {showCompleted ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+          {showCompleted ? <ChevronUp size={12} /> : <List size={12} />}
           {showCompleted ? <EyeOff size={12} /> : <Eye size={12} />}
           {showCompleted ? "Hide" : "Show"} Completed ({completedTasks.length})
         </button>

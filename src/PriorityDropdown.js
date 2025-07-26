@@ -78,12 +78,14 @@ const PriorityDropdown = ({ filterPriority, setFilterPriority, priority, setPrio
             <span className="font-medium">{selectedPriority?.label}</span>
           </span>
         </div>
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.3, type: "spring", stiffness: 200 }}
-        >
-          <ChevronDown size={14} />
-        </motion.div>
+        {variant === "task" && (
+          <motion.div
+            animate={{ rotate: isOpen ? 180 : 0 }}
+            transition={{ duration: 0.3, type: "spring", stiffness: 200 }}
+          >
+            <ChevronDown size={14} />
+          </motion.div>
+        )}
       </motion.button>
 
       {/* Dropdown menu */}
